@@ -19,488 +19,364 @@
 <body>
 <div id="root"></div>
 <script>
-const { useState, useEffect, useCallback } = React;
+const { useState } = React;
 
-// ─── STATIC CONFIG ───────────────────────────────────────────────────────────
+const LAST_UPDATED = "May 4, 2026";
 
-const BASE = "https://tcgcsv.com/tcgplayer";
-
-const BOX_IDS = {
-  "OP01-W1": 450086, "OP01-W2": 557280, "OP02": 455866,
-  "OP03": 477176,    "OP04": 485833,    "OP05": 498734,
-  "OP06": 515080,    "OP07": 532106,    "OP08": 542504,
-  "OP09": 563834,    "OP10": 586671,    "OP11": 620180,
-  "OP12": 628346,    "OP13": 628352,    "OP14": 665598,
-  "OP15": 682057,    "OP16": 689336,    "EB01": 521161,
-  "EB02": 594069,    "EB03": 666891,    "PRB01": 545399,
-  "PRB02": 628452,
-};
-
-const CARD_GROUPS = {
-  "OP01-W1": 3188,  "OP01-W2": 3188,  "OP02": 17698,
-  "OP03": 22890,    "OP04": 23024,     "OP05": 23213,
-  "OP06": 23272,    "OP07": 23387,     "OP08": 23462,
-  "OP09": 23589,    "OP10": 23766,     "OP11": 24241,
-  "OP12": 24302,    "OP13": 24303,     "OP14": 24537,
-  "OP15": 24637,    "OP16": 24664,     "EB01": 23333,
-  "EB02": 23834,    "EB03": 24545,     "PRB01": 23496,
-  "PRB02": 24305,
-};
-
-// Manual overrides for cards where TCGCSV data is unreliable
-// Add entries here when market price is null/fake
-const MANUAL_OVERRIDES = {
-  597065: { price: 4500, note: "Last sale 03/12/26 — market price null, low is single-seller listing $30K" },
+const TOP_CARDS = {
+  "OP01-W1": [
+    { name:"Shanks (Parallel) (Manga) (Alternate Art)",           code:"454666", price:2045.85 },
+    { name:"Monkey.D.Luffy (003) (Parallel)",                     code:"453506", price:855.26  },
+    { name:"Roronoa Zoro (001) (Parallel)",                       code:"454513", price:556.77  },
+    { name:"Trafalgar Law (002) (Parallel)",                      code:"454514", price:465.25  },
+    { name:"Nami (Parallel)",                                     code:"454536", price:431.54  },
+  ],
+  "OP01-W2": [
+    { name:"Shanks (Parallel) (Manga) (Alternate Art)",           code:"454666", price:2045.85 },
+    { name:"Monkey.D.Luffy (003) (Parallel)",                     code:"453506", price:855.26  },
+    { name:"Roronoa Zoro (001) (Parallel)",                       code:"454513", price:556.77  },
+    { name:"Trafalgar Law (002) (Parallel)",                      code:"454514", price:465.25  },
+    { name:"Nami (Parallel)",                                     code:"454536", price:431.54  },
+  ],
+  "OP02": [
+    { name:"Portgas.D.Ace (Parallel) (Manga) (Alternate Art)",   code:"485862", price:1587.96 },
+    { name:"Sanji (Alternate Art)",                               code:"483628", price:166.33  },
+    { name:"Monkey.D.Garp (002) (Alternate Art)",                 code:"483627", price:143.79  },
+    { name:"Edward.Newgate (001) (Alternate Art)",                code:"483470", price:122.35  },
+    { name:"Smoker (093) (Alternate Art)",                        code:"484476", price:101.45  },
+  ],
+  "OP03": [
+    { name:"Sogeking (Alternate Art) (Manga)",                    code:"500118", price:799.25  },
+    { name:"Monkey.D.Luffy (Wanted Poster)",                      code:"501678", price:361.45  },
+    { name:"Nami (040) (Alternate Art)",                          code:"498254", price:261.46  },
+    { name:"Charlotte Katakuri (099) (Alternate Art)",            code:"498484", price:103.74  },
+    { name:"Eustass Captain Kid (Wanted Poster)",                 code:"501677", price:94.38   },
+  ],
+  "OP04": [
+    { name:"Sabo (Alternate Art) (Manga)",                        code:"516558", price:754.74  },
+    { name:"Boa Hancock (SP)",                                    code:"516555", price:726.20  },
+    { name:"Trafalgar Law (SP)",                                  code:"516554", price:144.12  },
+    { name:"Edward.Newgate (SP)",                                 code:"516553", price:135.27  },
+    { name:"Nefeltari Vivi (001) (Alternate Art)",                code:"510774", price:101.22  },
+  ],
+  "OP05": [
+    { name:"Monkey.D.Luffy (119) (Alternate Art) (Manga)",        code:"527026", price:5700.00 },
+    { name:"Monkey.D.Luffy (012) (Gold-Stamped Signature)",       code:"529850", price:4747.83 },
+    { name:"Trafalgar Law (069) (Alternate Art) (Manga)",         code:"527019", price:1363.10 },
+    { name:"Eustass Captain Kid (Alternate Art) (Manga)",         code:"527020", price:795.98  },
+    { name:"Nami (SP)",                                           code:"527035", price:641.72  },
+  ],
+  "OP06": [
+    { name:"Roronoa Zoro (Alternate Art) (Manga)",                code:"541660", price:2000.52 },
+    { name:"Ms. All Sunday (SP)",                                 code:"541668", price:343.03  },
+    { name:"Nami (TR)",                                           code:"541664", price:180.60  },
+    { name:"Buggy (SP)",                                          code:"541665", price:156.37  },
+    { name:"Rebecca (SP)",                                        code:"541670", price:101.17  },
+  ],
+  "OP07": [
+    { name:"Boa Hancock (051) (Parallel) (Manga)",                code:"545841", price:1913.35 },
+    { name:"O-Nami (SP)",                                         code:"545927", price:335.62  },
+    { name:"Donquixote Doflamingo (SP)",                          code:"545923", price:110.71  },
+    { name:"Boa Hancock (038) (Parallel)",                        code:"545823", price:81.99   },
+    { name:"Trafalgar Law (010) (TR)",                            code:"555691", price:74.60   },
+  ],
+  "OP08": [
+    { name:"Silvers Rayleigh (Parallel) (Manga)",                 code:"558162", price:647.59  },
+    { name:"Portgas.D.Ace (SP)",                                  code:"558019", price:255.64  },
+    { name:"Jewelry Bonney (SP)",                                 code:"558165", price:244.40  },
+    { name:"Monkey.D.Luffy (TR)",                                 code:"564551", price:152.63  },
+    { name:"Charlotte Pudding (SP)",                              code:"558020", price:119.23  },
+  ],
+  "OP09": [
+    { name:"Gol.D.Roger (Manga) (Foil)",                          code:"597065", price:4500,    manual:true, manualNote:"Last sale 03/12/26 — market price null, low is single-seller listing $30K" },
+    { name:"Monkey.D.Luffy (119) (Manga)",                        code:"597068", price:2089.74 },
+    { name:"Shanks (004) (Manga)",                                code:"596925", price:1300.16 },
+    { name:"Marshall.D.Teach (093) (Manga)",                      code:"597035", price:1298.87 },
+    { name:"Buggy (051) (Manga)",                                 code:"596984", price:1147.26 },
+  ],
+  "OP10": [
+    { name:"Trafalgar Law (119) (Manga)",                         code:"617173", price:824.71  },
+    { name:"Edward.Newgate (SP)",                                 code:"617176", price:194.65  },
+    { name:"Uso-Hachi (SP)",                                      code:"617177", price:143.58  },
+    { name:"Sanji (SP)",                                          code:"617175", price:119.60  },
+    { name:"Divine Departure (Parallel)",                         code:"617054", price:59.88   },
+  ],
+  "OP11": [
+    { name:"Monkey.D.Luffy (119) (SP) (Gold)",                    code:"632504", price:4048.51 },
+    { name:"Monkey.D.Luffy (119) (SP)",                           code:"632503", price:2760.70 },
+    { name:"Monkey.D.Luffy (118) (Manga)",                        code:"632499", price:1359.02 },
+    { name:"Luffy-Tarou (SP)",                                    code:"632509", price:385.81  },
+    { name:"Gear Two (Alternate Art)",                            code:"632453", price:186.58  },
+  ],
+  "OP12": [
+    { name:"Marshall.D.Teach (SP) (Gold)",                        code:"646573", price:1293.37 },
+    { name:"Jewelry Bonney (118) (Manga)",                        code:"643867", price:948.62  },
+    { name:"Marshall.D.Teach (SP) (Silver)",                      code:"646572", price:775.79  },
+    { name:"Zoro-Juurou (SP)",                                    code:"646566", price:177.45  },
+    { name:"Demon Aura Nine Sword Style (Alternate Art)",         code:"643769", price:131.02  },
+  ],
+  "OP13": [
+    { name:"Monkey.D.Luffy (118) (Red Super Alternate Art)",      code:"657401", price:8489.98 },
+    { name:"Sabo (120) (Red Super Alternate Art)",                code:"657411", price:4749.98 },
+    { name:"Monkey.D.Luffy (118) (Super Alternate Art)",          code:"657402", price:2025.62 },
+    { name:"Shanks - OP09-004 (SP) (Gold)",                       code:"657442", price:1601.04 },
+    { name:"Portgas.D.Ace (119) (Super Alternate Art)",           code:"657407", price:1217.59 },
+  ],
+  "OP14": [
+    { name:"Buggy - OP09-051 (SP) (Gold)",                        code:"671453", price:2336.89 },
+    { name:"Buggy - OP09-051 (SP)",                               code:"671454", price:1221.16 },
+    { name:"Roronoa Zoro - PRB02-006 (SP)",                       code:"670642", price:955.01  },
+    { name:"Dracule Mihawk (Manga)",                              code:"671448", price:733.85  },
+    { name:"Boa Hancock - OP14-112 (SP)",                         code:"671457", price:546.09  },
+  ],
+  "OP15": [
+    { name:"Enel (OP15-118) (Manga)",                             code:"685479", price:1150.74 },
+    { name:"Koby (EB04-044) (Manga)",                             code:"685313", price:754.99  },
+    { name:"Boa Hancock (SP)",                                    code:"685011", price:445.25  },
+    { name:"Zeus (SP)",                                           code:"685009", price:377.14  },
+    { name:"Monkey.D.Luffy (SP)",                                 code:"685194", price:362.87  },
+  ],
+  "OP16": [],
+  "EB01": [
+    { name:"Tony Tony.Chopper (Alternate Art) (Manga)",           code:"544532", price:2427.43 },
+    { name:"Mr.2.Bon.Kurei (Bentham) (Alternate Art)",            code:"544602", price:121.49  },
+    { name:"Tony Tony.Chopper (Alternate Art)",                   code:"544531", price:59.46   },
+    { name:"Laboon (048) (Alternate Art)",                        code:"544584", price:54.61   },
+    { name:"Kouzuki Oden (Alternate Art)",                        code:"544524", price:42.83   },
+  ],
+  "EB02": [
+    { name:"Monkey.D.Luffy (061) (Manga)",                        code:"629167", price:2417.00 },
+    { name:"Monkey.D.Luffy (SP)",                                 code:"629171", price:1241.00 },
+    { name:"Tony Tony.Chopper (SP)",                              code:"629185", price:1013.58 },
+    { name:"Monkey.D.Luffy (010) (Alternate Art)",                code:"629101", price:803.60  },
+    { name:"Yamato (SP)",                                         code:"629176", price:721.24  },
+  ],
+  "EB03": [
+    { name:"Uta (061) (Manga)",                                   code:"672817", price:1275.95 },
+    { name:"Nami (053) (SP)",                                     code:"672827", price:1138.12 },
+    { name:"Nico Robin (055) (SP)",                               code:"672828", price:970.57  },
+    { name:"Boa Hancock (SP)",                                    code:"672823", price:747.33  },
+    { name:"Nefeltari Vivi (024) (SP)",                           code:"672822", price:350.15  },
+  ],
+  "PRB01": [
+    { name:"Monkey.D.Luffy (OP05-119) (Manga)",                   code:"587963", price:3633.33 },
+    { name:"Nami (OP01-016) (Manga)",                             code:"587966", price:1965.68 },
+    { name:"Roronoa Zoro (Manga)",                                code:"587964", price:1750.00 },
+    { name:"Tony Tony.Chopper (EB01-006) (Manga)",                code:"587962", price:1704.75 },
+    { name:"Shanks (Manga)",                                      code:"587708", price:1249.99 },
+  ],
+  "PRB02": [
+    { name:"Sanji - OP06-119 (Manga)",                            code:"654637", price:1915.99 },
+    { name:"Gum-Gum Giant (Alternate Art)",                       code:"653835", price:702.86  },
+    { name:"Monkey.D.Luffy - EB02-061 (SP)",                      code:"654533", price:509.73  },
+    { name:"Cross Guild (Alternate Art)",                         code:"653834", price:278.33  },
+    { name:"My Era...Begins!! (Alternate Art)",                   code:"653836", price:276.71  },
+  ],
 };
 
 const SETS = [
-  { id:"OP01-W1", code:"OP-01 (Wave 1)", name:"Romance Dawn",              type:"main",    release:"Dec 2022", tier:"trophy", packs:24, notes:"Blue packaging. The grail — entire cases have sold for $80K." },
-  { id:"OP01-W2", code:"OP-01 (Wave 2)", name:"Romance Dawn",              type:"main",    release:"Dec 2022", tier:"trophy", packs:24, notes:"White packaging. More accessible than Wave 1 but still premium." },
-  { id:"OP02",    code:"OP-02",          name:"Paramount War",             type:"main",    release:"Mar 2023", tier:"trophy", packs:24, notes:"Very few sealed boxes remain. Benefits from OP01 scarcity." },
-  { id:"OP03",    code:"OP-03",          name:"Pillars of Strength",       type:"main",    release:"Jun 2023", tier:"trophy", packs:24, notes:"Block 1 set (rotated Apr 2026). Collector demand drives price." },
-  { id:"OP04",    code:"OP-04",          name:"Kingdoms of Intrigue",      type:"main",    release:"Sep 2023", tier:"trophy", packs:24, notes:"Steady appreciation; Block 1 vintage status reinforced post-rotation." },
-  { id:"OP05",    code:"OP-05",          name:"Awakening of the New Era",  type:"main",    release:"Dec 2023", tier:"trophy", packs:24, notes:"Most sought-after investment set. Two cards worth more than most sealed boxes." },
-  { id:"OP06",    code:"OP-06",          name:"Wings of the Captain",      type:"main",    release:"Mar 2024", tier:"hold",   packs:24, notes:"Steady climber; consistent demand from Sanji/Zoro fans." },
-  { id:"OP07",    code:"OP-07",          name:"500 Years in the Future",   type:"main",    release:"Jun 2024", tier:"hold",   packs:24, notes:"Reliable appreciation tracking the broader market uptrend." },
-  { id:"OP08",    code:"OP-08",          name:"Two Legends",               type:"main",    release:"Sep 2024", tier:"hold",   packs:24, notes:"Affordable entry point. Rayleigh Manga Rare is the chase." },
-  { id:"OP09",    code:"OP-09",          name:"Emperors in the New World", type:"main",    release:"Dec 2024", tier:"trophy", packs:24, notes:"Gold Roger alone anchors this in Tier 1." },
-  { id:"OP10",    code:"OP-10",          name:"Royal Blood",               type:"main",    release:"Mar 2025", tier:"hold",   packs:24, notes:"Low entry point with minimal downside risk as supply tightens." },
-  { id:"OP11",    code:"OP-11",          name:"A Fist of Divine Speed",    type:"main",    release:"Jun 2025", tier:"hold",   packs:24, notes:"Three major chase cards in one set — rare concentration." },
-  { id:"OP12",    code:"OP-12",          name:"Legacy of the Master",      type:"main",    release:"Sep 2025", tier:"hold",   packs:24, notes:"Still finding price floor as distribution supply settles." },
-  { id:"OP13",    code:"OP-13",          name:"Carrying On His Will",      type:"main",    release:"Nov 2025", tier:"trophy", packs:24, notes:"3rd anniversary set. Luffy, Ace & Sabo Manga Rares. Already climbing fast." },
-  { id:"OP14",    code:"OP-14",          name:"The Azure Sea's Seven",     type:"main",    release:"Jan 2026", tier:"hold",   packs:24, notes:"Strong upside potential as supply tightens post-release." },
-  { id:"OP15",    code:"OP-15",          name:"Adventure on Kami's Island",type:"main",    release:"Apr 2026", tier:"new",    packs:24, notes:"Brand new (Apr 2026). Skypiea Arc." },
-  { id:"OP16",    code:"OP-16",          name:"The Time of Battle",        type:"main",    release:"May 2026", tier:"new",    packs:24, notes:"Brand new (May 2026). Chase cards TBD." },
-  { id:"EB01",    code:"EB-01",          name:"Memorial Collection",       type:"extra",   release:"Feb 2024", tier:"trophy", packs:24, notes:"Chopper Manga Rare is the crown jewel." },
-  { id:"EB02",    code:"EB-02",          name:"Anime 25th Collection",     type:"extra",   release:"May 2025", tier:"trophy", packs:24, notes:"25th anniversary anime art; massive Luffy pull value." },
-  { id:"EB03",    code:"EB-03",          name:"Heroines Edition",          type:"extra",   release:"Feb 2026", tier:"watch",  packs:24, notes:"#1 seller Feb 2026. Extremely high pull value relative to box cost." },
-  { id:"PRB01",   code:"PRB-01",         name:"The Best Vol. 1",           type:"premium", release:"Nov 2024", tier:"trophy", packs:20, notes:"10 cards/pack. Luffy, Nami, Zoro & Chopper Manga Comic Parallels." },
-  { id:"PRB02",   code:"PRB-02",         name:"The Best Vol. 2",           type:"premium", release:"Oct 2025", tier:"hold",   packs:20, notes:"Guaranteed SR per pack. Sanji Manga debut." },
+  { id:"OP01-W1", code:"OP-01 (Wave 1)", name:"Romance Dawn",              type:"main",    release:"Dec 2022", price:5831.75, tier:"trophy", packs:24, notes:"Blue packaging. The grail — entire cases have sold for $80K." },
+  { id:"OP01-W2", code:"OP-01 (Wave 2)", name:"Romance Dawn",              type:"main",    release:"Dec 2022", price:1841.54, tier:"trophy", packs:24, notes:"White packaging. More accessible than Wave 1 but still premium." },
+  { id:"OP02",    code:"OP-02",          name:"Paramount War",             type:"main",    release:"Mar 2023", price:496.21,  tier:"trophy", packs:24, notes:"Very few sealed boxes remain. Benefits from OP01 scarcity." },
+  { id:"OP03",    code:"OP-03",          name:"Pillars of Strength",       type:"main",    release:"Jun 2023", price:541.88,  tier:"trophy", packs:24, notes:"Block 1 set (rotated Apr 2026). Collector demand drives price." },
+  { id:"OP04",    code:"OP-04",          name:"Kingdoms of Intrigue",      type:"main",    release:"Sep 2023", price:523.57,  tier:"trophy", packs:24, notes:"Steady appreciation; Block 1 vintage status reinforced post-rotation." },
+  { id:"OP05",    code:"OP-05",          name:"Awakening of the New Era",  type:"main",    release:"Dec 2023", price:976.11,  tier:"trophy", packs:24, notes:"Most sought-after investment set. Two cards worth more than most sealed boxes." },
+  { id:"OP06",    code:"OP-06",          name:"Wings of the Captain",      type:"main",    release:"Mar 2024", price:355.38,  tier:"hold",   packs:24, notes:"Steady climber; consistent demand from Sanji/Zoro fans." },
+  { id:"OP07",    code:"OP-07",          name:"500 Years in the Future",   type:"main",    release:"Jun 2024", price:294.38,  tier:"hold",   packs:24, notes:"Reliable appreciation tracking the broader market uptrend." },
+  { id:"OP08",    code:"OP-08",          name:"Two Legends",               type:"main",    release:"Sep 2024", price:223.66,  tier:"hold",   packs:24, notes:"Affordable entry point. Rayleigh Manga Rare is the chase." },
+  { id:"OP09",    code:"OP-09",          name:"Emperors in the New World", type:"main",    release:"Dec 2024", price:587.80,  tier:"trophy", packs:24, notes:"Gold Roger alone anchors this in Tier 1." },
+  { id:"OP10",    code:"OP-10",          name:"Royal Blood",               type:"main",    release:"Mar 2025", price:221.57,  tier:"hold",   packs:24, notes:"Low entry point with minimal downside risk as supply tightens." },
+  { id:"OP11",    code:"OP-11",          name:"A Fist of Divine Speed",    type:"main",    release:"Jun 2025", price:407.70,  tier:"hold",   packs:24, notes:"Three major chase cards in one set — rare concentration." },
+  { id:"OP12",    code:"OP-12",          name:"Legacy of the Master",      type:"main",    release:"Sep 2025", price:250.34,  tier:"hold",   packs:24, notes:"Still finding price floor as distribution supply settles." },
+  { id:"OP13",    code:"OP-13",          name:"Carrying On His Will",      type:"main",    release:"Nov 2025", price:586.70,  tier:"trophy", packs:24, notes:"3rd anniversary set. Luffy, Ace & Sabo Manga Rares. Already climbing fast." },
+  { id:"OP14",    code:"OP-14",          name:"The Azure Sea's Seven",     type:"main",    release:"Jan 2026", price:239.62,  tier:"hold",   packs:24, notes:"Strong upside potential as supply tightens post-release." },
+  { id:"OP15",    code:"OP-15",          name:"Adventure on Kami's Island",type:"main",    release:"Apr 2026", price:208.97,  tier:"new",    packs:24, notes:"Brand new (Apr 2026). Skypiea Arc." },
+  { id:"OP16",    code:"OP-16",          name:"The Time of Battle",        type:"main",    release:"May 2026", price:277.13,  tier:"new",    packs:24, notes:"Brand new (May 2026). Chase cards TBD." },
+  { id:"EB01",    code:"EB-01",          name:"Memorial Collection",       type:"extra",   release:"Feb 2024", price:840.81,  tier:"trophy", packs:24, notes:"Chopper Manga Rare is the crown jewel." },
+  { id:"EB02",    code:"EB-02",          name:"Anime 25th Collection",     type:"extra",   release:"May 2025", price:447.74,  tier:"trophy", packs:24, notes:"25th anniversary anime art; massive Luffy pull value." },
+  { id:"EB03",    code:"EB-03",          name:"Heroines Edition",          type:"extra",   release:"Feb 2026", price:300.98,  tier:"watch",  packs:24, notes:"#1 seller Feb 2026. Extremely high pull value relative to box cost." },
+  { id:"PRB01",   code:"PRB-01",         name:"The Best Vol. 1",           type:"premium", release:"Nov 2024", price:843.42,  tier:"trophy", packs:20, notes:"10 cards/pack. Luffy, Nami, Zoro & Chopper Manga Comic Parallels." },
+  { id:"PRB02",   code:"PRB-02",         name:"The Best Vol. 2",           type:"premium", release:"Oct 2025", price:333.85,  tier:"hold",   packs:20, notes:"Guaranteed SR per pack. Sanji Manga debut." },
 ];
 
 const TIER_CONFIG = {
-  trophy: { label:"🏆 Trophy",      color:"#FFD700", bg:"rgba(255,215,0,0.15)",   border:"rgba(255,215,0,0.4)" },
+  trophy: { label:"🏆 Trophy",      color:"#FFD700", bg:"rgba(255,215,0,0.15)",   border:"rgba(255,215,0,0.4)"   },
   hold:   { label:"⚓ Solid Hold",  color:"#60A5FA", bg:"rgba(96,165,250,0.12)",  border:"rgba(96,165,250,0.35)" },
-  watch:  { label:"👁 Watch",       color:"#A78BFA", bg:"rgba(167,139,250,0.12)", border:"rgba(167,139,250,0.35)" },
+  watch:  { label:"👁 Watch",       color:"#A78BFA", bg:"rgba(167,139,250,0.12)", border:"rgba(167,139,250,0.35)"},
   new:    { label:"🆕 New Release", color:"#34D399", bg:"rgba(52,211,153,0.12)",  border:"rgba(52,211,153,0.35)" },
 };
-
 const TYPE_LABELS = { main:"Main Set", extra:"Extra Booster", premium:"Premium Booster" };
+const fmt = n => n != null ? "$" + Number(n).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2}) : "—";
 
-// ─── FETCH HELPERS ────────────────────────────────────────────────────────────
-
-async function fetchJSON(url) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 15000);
-  try {
-    const r = await fetch(url, { signal: ctrl.signal });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    return await r.json();
-  } finally { clearTimeout(t); }
+function getMetric(id, price) {
+  const cards = TOP_CARDS[id];
+  if (!cards || !cards.length || !price) return null;
+  const sum = cards.reduce((s,c) => s+c.price, 0);
+  return { sum, ratio:(sum/price).toFixed(2), cards };
 }
-
-async function loadAllPrices(onProgress) {
-  const cats = await fetchJSON(BASE + "/categories");
-  const op = cats.results.find(c => (c.name||"").toLowerCase().includes("one piece"));
-  if (!op) throw new Error("One Piece category not found on TCGCSV");
-  const catId = op.categoryId;
-
-  const uniqueGroups = [...new Set([...Object.values(BOX_IDS).map(() => null), ...Object.values(CARD_GROUPS)])].filter(Boolean);
-  const allGroupIds = [...new Set(Object.values(CARD_GROUPS))];
-
-  const priceMap = {};   // productId -> price object
-  const productMap = {}; // productId -> name
-
-  let done = 0;
-  await Promise.all(allGroupIds.map(async (gid) => {
-    const [prods, prices] = await Promise.all([
-      fetchJSON(BASE + "/" + catId + "/" + gid + "/products"),
-      fetchJSON(BASE + "/" + catId + "/" + gid + "/prices"),
-    ]);
-    for (const p of prods.results || []) productMap[p.productId] = p.name;
-    for (const p of prices.results || []) if (!priceMap[p.productId]) priceMap[p.productId] = p;
-    done++;
-    onProgress(done, allGroupIds.length);
-  }));
-
-  // Apply manual overrides
-  for (const [pid, override] of Object.entries(MANUAL_OVERRIDES)) {
-    if (!priceMap[pid]) priceMap[pid] = {};
-    priceMap[pid]._manualPrice = override.price;
-    priceMap[pid]._manualNote = override.note;
-  }
-
-  // Build per-set data
-  const setData = {};
-  for (const set of SETS) {
-    const boxId = BOX_IDS[set.id];
-    const gid = CARD_GROUPS[set.id];
-    const boxPrice = priceMap[boxId];
-    const market = boxPrice?.marketPrice ?? null;
-    const low = boxPrice?.lowPrice ?? null;
-
-    // Top 5 cards for this group
-    const groupProducts = Object.entries(productMap)
-      .filter(([pid]) => {
-        const p = priceMap[pid];
-        return p && Object.keys(CARD_GROUPS).some(code => CARD_GROUPS[code] === gid);
-      });
-
-    // Get all products in this group
-    const inGroup = [];
-    for (const [pid, name] of Object.entries(productMap)) {
-      if (/(booster box|booster pack|case|pack$|display)/i.test(name)) continue;
-      const p = priceMap[pid];
-      if (!p) continue;
-      const override = MANUAL_OVERRIDES[pid];
-      const price = override ? override.price : (p.marketPrice || 0);
-      if (price <= 0) continue;
-      inGroup.push({
-        id: pid,
-        name,
-        price,
-        manual: !!override,
-        manualNote: override?.note || null,
-      });
-    }
-
-    // We need to filter to only products in this specific group
-    // Re-fetch is too expensive; we'll use the product-to-group mapping built during fetch
-    // For now mark all products as potentially in group — filtering happens via set-specific groupId
-    const top5 = inGroup
-      .sort((a, b) => b.price - a.price)
-      .slice(0, 5);
-
-    setData[set.id] = {
-      boxMarket: market,
-      boxLow: low,
-      top5,
-    };
-  }
-
-  return { priceMap, productMap, setData, catId };
+function mc(ratio) {
+  const r = parseFloat(ratio);
+  return r>=5?"#34D399":r>=2?"#FFD700":r>=1?"#60A5FA":"#F87171";
 }
-
-// Better: build group membership during fetch
-async function loadAllPricesV2(onProgress) {
-  const cats = await fetchJSON(BASE + "/categories");
-  const op = cats.results.find(c => (c.name||"").toLowerCase().includes("one piece"));
-  if (!op) throw new Error("One Piece category not found on TCGCSV");
-  const catId = op.categoryId;
-
-  const allGroupIds = [...new Set(Object.values(CARD_GROUPS))];
-  const priceMap = {};        // productId -> price object
-  const groupMembers = {};    // groupId -> [productId]
-
-  let done = 0;
-  await Promise.all(allGroupIds.map(async (gid) => {
-    const [prods, prices] = await Promise.all([
-      fetchJSON(BASE + "/" + catId + "/" + gid + "/products"),
-      fetchJSON(BASE + "/" + catId + "/" + gid + "/prices"),
-    ]);
-    groupMembers[gid] = [];
-    for (const p of prods.results || []) {
-      groupMembers[gid].push({ id: p.productId, name: p.name });
-    }
-    for (const p of prices.results || []) if (!priceMap[p.productId]) priceMap[p.productId] = p;
-    done++;
-    onProgress(done, allGroupIds.length);
-  }));
-
-  // Build per-set results
-  const setData = {};
-  for (const set of SETS) {
-    const boxId = BOX_IDS[set.id];
-    const gid = CARD_GROUPS[set.id];
-    const bp = priceMap[boxId];
-
-    const members = groupMembers[gid] || [];
-    const cards = [];
-    for (const { id, name } of members) {
-      if (/(booster box|booster pack|case|pack$|display)/i.test(name)) continue;
-      const override = MANUAL_OVERRIDES[id];
-      const p = priceMap[id];
-      const price = override ? override.price : (p?.marketPrice || 0);
-      if (price <= 0) continue;
-      cards.push({ id: String(id), name, price, manual: !!override, manualNote: override?.note || null });
-    }
-    cards.sort((a, b) => b.price - a.price);
-
-    setData[set.id] = {
-      boxMarket: bp?.marketPrice ?? null,
-      boxLow:    bp?.lowPrice ?? null,
-      top5: cards.slice(0, 5),
-    };
-  }
-
-  return { setData };
+function TrendIcon({tier}) {
+  const s = {fontSize:12};
+  if (tier==="trophy"||tier==="watch") return React.createElement("span",{style:{...s,color:"#34D399"}},"▲ Rising");
+  if (tier==="new")  return React.createElement("span",{style:{...s,color:"#34D399"}},"★ New");
+  return React.createElement("span",{style:{...s,color:"#94A3B8"}},"● Stable");
 }
-
-// ─── UI HELPERS ───────────────────────────────────────────────────────────────
-
-function fmt(n) { return n != null ? "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—"; }
-
-function TrendIcon({ trend }) {
-  if (trend === "up")     return React.createElement("span", { style:{ color:"#34D399", fontSize:12 } }, "▲ Rising");
-  if (trend === "stable") return React.createElement("span", { style:{ color:"#94A3B8", fontSize:12 } }, "● Stable");
-  if (trend === "new")    return React.createElement("span", { style:{ color:"#34D399", fontSize:12 } }, "★ New");
-  return null;
-}
-
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
 
 function App() {
-  const [loadState, setLoadState] = useState("idle"); // idle | loading | done | error
-  const [progress, setProgress]   = useState({ done: 0, total: 0 });
-  const [setData, setSetData]     = useState({});
-  const [loadedAt, setLoadedAt]   = useState(null);
-  const [error, setError]         = useState(null);
-
-  const [filter, setFilter]       = useState("all");
+  const [filter,     setFilter]     = useState("all");
   const [tierFilter, setTierFilter] = useState("all");
-  const [sort, setSort]           = useState("release");
-  const [expanded, setExpanded]   = useState(null);
+  const [sort,       setSort]       = useState("release");
+  const [expanded,   setExpanded]   = useState(null);
+  const h = (t,p,...c) => React.createElement(t,p,...c);
 
-  const load = useCallback(async () => {
-    setLoadState("loading");
-    setError(null);
-    setProgress({ done: 0, total: 0 });
-    try {
-      const { setData: sd } = await loadAllPricesV2((done, total) => setProgress({ done, total }));
-      setSetData(sd);
-      setLoadedAt(new Date());
-      setLoadState("done");
-    } catch (e) {
-      setError(e.message);
-      setLoadState("error");
-    }
-  }, []);
-
-  useEffect(() => { load(); }, []);
-
-  // Merge static set config with live data
-  const sets = SETS.map(s => {
-    const live = setData[s.id];
-    const price = live?.boxMarket ?? null;
-    const top5  = live?.top5 ?? [];
-    const sum   = top5.reduce((acc, c) => acc + c.price, 0);
-    const ratio = price && sum ? (sum / price).toFixed(2) : null;
-    const metricRatio = ratio ? parseFloat(ratio) : 0;
-    const metricColor = !ratio ? "#64748B" : metricRatio >= 5 ? "#34D399" : metricRatio >= 2 ? "#FFD700" : metricRatio >= 1 ? "#60A5FA" : "#F87171";
-    return { ...s, price, boxLow: live?.boxLow ?? null, top5, sum, ratio, metricColor };
-  });
-
-  const filtered = sets
-    .filter(s => filter === "all" || s.type === filter)
-    .filter(s => tierFilter === "all" || s.tier === tierFilter)
-    .sort((a, b) => {
-      if (sort === "price-desc")   return (b.price||0) - (a.price||0);
-      if (sort === "price-asc")    return (a.price||0) - (b.price||0);
-      if (sort === "metric-desc")  return parseFloat(b.ratio||0) - parseFloat(a.ratio||0);
-      return SETS.indexOf(SETS.find(s=>s.id===a.id)) - SETS.indexOf(SETS.find(s=>s.id===b.id));
+  const filtered = SETS
+    .filter(s => filter==="all"||s.type===filter)
+    .filter(s => tierFilter==="all"||s.tier===tierFilter)
+    .sort((a,b) => {
+      if (sort==="price-desc")  return b.price-a.price;
+      if (sort==="price-asc")   return a.price-b.price;
+      if (sort==="metric-desc") {
+        const ma=getMetric(a.id,a.price), mb=getMetric(b.id,b.price);
+        return parseFloat(mb?.ratio||0)-parseFloat(ma?.ratio||0);
+      }
+      return SETS.indexOf(a)-SETS.indexOf(b);
     });
 
-  const loadedSets   = sets.filter(s => s.price != null).length;
-  const avgPrice     = loadedSets ? Math.round(sets.filter(s=>s.price).reduce((a,s)=>a+s.price,0)/loadedSets) : 0;
-  const trophyCount  = sets.filter(s => s.tier === "trophy").length;
-  const pct          = progress.total ? Math.round(progress.done / progress.total * 100) : 0;
+  const avg = Math.round(SETS.reduce((s,x)=>s+x.price,0)/SETS.length);
 
-  const h = (tag, props, ...children) => React.createElement(tag, props, ...children);
+  return h("div",{style:{minHeight:"100vh",paddingBottom:60}},
 
-  return h("div", { style:{ minHeight:"100vh", paddingBottom:60 } },
-
-    // ── Header ──
-    h("div", { style:{ background:"linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%)", borderBottom:"1px solid rgba(255,215,0,0.2)", padding:"36px 24px 28px", textAlign:"center", position:"relative", overflow:"hidden" } },
-      h("div", { style:{ position:"absolute", inset:0, backgroundImage:"radial-gradient(circle at 20% 50%,rgba(255,215,0,0.06) 0%,transparent 60%),radial-gradient(circle at 80% 50%,rgba(96,165,250,0.06) 0%,transparent 60%)" } }),
-      h("div", { style:{ position:"relative" } },
-        h("div", { style:{ fontSize:10, letterSpacing:"0.25em", color:"#64748B", textTransform:"uppercase", marginBottom:6 } },
-          loadedAt ? "Live prices from TCGPlayer via TCGCSV · Updated " + loadedAt.toLocaleTimeString() : "Loading live prices from TCGPlayer via TCGCSV…"
-        ),
-        h("h1", { style:{ fontSize:"clamp(22px,5vw,36px)", fontWeight:900, color:"#fff", margin:"0 0 4px", letterSpacing:"-0.5px" } }, "⚓ One Piece TCG"),
-        h("h2", { style:{ fontSize:"clamp(13px,3vw,18px)", color:"#FFD700", fontWeight:400, margin:"0 0 18px", fontStyle:"italic" } }, "English Booster Box Price Guide"),
-
-        // Stats row
-        h("div", { style:{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap", marginBottom: loadState==="loading" ? 16 : 0 } },
-          [
-            { label:"Total Sets", val: SETS.length },
-            { label:"Avg. Box Price", val: loadState==="done" ? fmt(avgPrice) : "…" },
-            { label:"Trophy Sets", val: trophyCount },
-          ].map(({ label, val }) =>
-            h("div", { key:label, style:{ background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, padding:"8px 18px", textAlign:"center" } },
-              h("div", { style:{ fontSize:20, fontWeight:700, color:"#FFD700" } }, val),
-              h("div", { style:{ fontSize:10, color:"#94A3B8", letterSpacing:"0.1em" } }, label)
-            )
-          )
-        ),
-
-        // Progress bar
-        loadState === "loading" && h("div", { style:{ maxWidth:400, margin:"0 auto" } },
-          h("div", { style:{ fontSize:11, color:"#64748B", marginBottom:4 } }, "Scanning " + progress.total + " set groups… " + pct + "%"),
-          h("div", { style:{ height:4, background:"rgba(255,255,255,0.1)", borderRadius:2 } },
-            h("div", { style:{ height:"100%", width: pct+"%", background:"#FFD700", borderRadius:2, transition:"width 0.3s" } })
-          )
-        ),
-
-        loadState === "error" && h("div", { style:{ marginTop:12, color:"#F87171", fontSize:12 } },
-          "⚠ " + error + " · ",
-          h("span", { style:{ color:"#60A5FA", cursor:"pointer", textDecoration:"underline" }, onClick: load }, "Retry")
-        ),
-
-        loadState === "done" && h("button", {
-          onClick: load,
-          style:{ marginTop:12, padding:"5px 16px", borderRadius:20, border:"1px solid rgba(255,215,0,0.3)", background:"transparent", color:"#FFD700", fontSize:11, cursor:"pointer" }
-        }, "↺ Refresh prices")
+    // Header
+    h("div",{style:{background:"linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%)",borderBottom:"1px solid rgba(255,215,0,0.2)",padding:"36px 24px 28px",textAlign:"center",position:"relative",overflow:"hidden"}},
+      h("div",{style:{position:"absolute",inset:0,backgroundImage:"radial-gradient(circle at 20% 50%,rgba(255,215,0,0.06) 0%,transparent 60%),radial-gradient(circle at 80% 50%,rgba(96,165,250,0.06) 0%,transparent 60%)"}}),
+      h("div",{style:{position:"relative"}},
+        h("div",{style:{fontSize:10,letterSpacing:"0.25em",color:"#64748B",textTransform:"uppercase",marginBottom:6}},"TCGPlayer via TCGCSV · Last updated "+LAST_UPDATED),
+        h("h1",{style:{fontSize:"clamp(22px,5vw,36px)",fontWeight:900,color:"#fff",margin:"0 0 4px",letterSpacing:"-0.5px"}},"⚓ One Piece TCG"),
+        h("h2",{style:{fontSize:"clamp(13px,3vw,18px)",color:"#FFD700",fontWeight:400,margin:"0 0 18px",fontStyle:"italic"}},"English Booster Box Price Guide"),
+        h("div",{style:{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}},
+          [{label:"Total Sets",val:SETS.length},{label:"Avg. Box Price",val:fmt(avg)},{label:"Trophy Sets",val:SETS.filter(s=>s.tier==="trophy").length}]
+          .map(({label,val})=>h("div",{key:label,style:{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,padding:"8px 18px",textAlign:"center"}},
+            h("div",{style:{fontSize:20,fontWeight:700,color:"#FFD700"}},val),
+            h("div",{style:{fontSize:10,color:"#94A3B8",letterSpacing:"0.1em"}},label)
+          ))
+        )
       )
     ),
 
-    // ── Filters ──
-    h("div", { style:{ padding:"18px 16px 0", maxWidth:1100, margin:"0 auto" } },
-      h("div", { style:{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:12, alignItems:"center" } },
-        h("span", { style:{ fontSize:10, color:"#64748B", letterSpacing:"0.1em", textTransform:"uppercase" } }, "Type:"),
-        ...["all","main","extra","premium"].map(t =>
-          h("button", { key:t, onClick:()=>setFilter(t), style:{
-            padding:"4px 12px", borderRadius:20, border:"1px solid",
-            borderColor: filter===t ? "#FFD700" : "rgba(255,255,255,0.15)",
-            background:  filter===t ? "rgba(255,215,0,0.15)" : "transparent",
-            color:       filter===t ? "#FFD700" : "#94A3B8", fontSize:11, transition:"all 0.2s",
-          }}, t==="all" ? "All" : TYPE_LABELS[t])
-        ),
-        h("span", { style:{ fontSize:10, color:"#64748B", letterSpacing:"0.1em", textTransform:"uppercase", marginLeft:6 } }, "Tier:"),
-        ...["all","trophy","hold","watch","new"].map(t =>
-          h("button", { key:t, onClick:()=>setTierFilter(t), style:{
-            padding:"4px 12px", borderRadius:20, border:"1px solid",
-            borderColor: tierFilter===t ? "#60A5FA" : "rgba(255,255,255,0.15)",
-            background:  tierFilter===t ? "rgba(96,165,250,0.15)" : "transparent",
-            color:       tierFilter===t ? "#60A5FA" : "#94A3B8", fontSize:11, transition:"all 0.2s",
-          }}, t==="all" ? "All Tiers" : (TIER_CONFIG[t]?.label || t))
-        ),
-        h("div", { style:{ marginLeft:"auto" } },
-          h("select", { value:sort, onChange:e=>setSort(e.target.value), style:{ background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.15)", color:"#CBD5E1", padding:"4px 8px", borderRadius:6, fontSize:11 } },
-            h("option", { value:"release" },      "Sort: Release Order"),
-            h("option", { value:"price-desc" },   "Sort: Price High → Low"),
-            h("option", { value:"price-asc" },    "Sort: Price Low → High"),
-            h("option", { value:"metric-desc" },  "Sort: Value Metric High → Low"),
+    // Body
+    h("div",{style:{padding:"16px 16px 0",maxWidth:1100,margin:"0 auto"}},
+
+      // Filter bar
+      h("div",{style:{display:"flex",gap:8,flexWrap:"wrap",marginBottom:10,alignItems:"center"}},
+        h("span",{style:{fontSize:10,color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase"}},"Type:"),
+        ...["all","main","extra","premium"].map(t=>h("button",{key:t,onClick:()=>setFilter(t),style:{padding:"4px 12px",borderRadius:20,border:"1px solid",borderColor:filter===t?"#FFD700":"rgba(255,255,255,0.15)",background:filter===t?"rgba(255,215,0,0.15)":"transparent",color:filter===t?"#FFD700":"#94A3B8",fontSize:11}},t==="all"?"All":TYPE_LABELS[t])),
+        h("span",{style:{fontSize:10,color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase",marginLeft:6}},"Tier:"),
+        ...["all","trophy","hold","watch","new"].map(t=>h("button",{key:t,onClick:()=>setTierFilter(t),style:{padding:"4px 12px",borderRadius:20,border:"1px solid",borderColor:tierFilter===t?"#60A5FA":"rgba(255,255,255,0.15)",background:tierFilter===t?"rgba(96,165,250,0.15)":"transparent",color:tierFilter===t?"#60A5FA":"#94A3B8",fontSize:11}},t==="all"?"All Tiers":(TIER_CONFIG[t]?.label||t))),
+        h("div",{style:{marginLeft:"auto"}},
+          h("select",{value:sort,onChange:e=>setSort(e.target.value),style:{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.15)",color:"#CBD5E1",padding:"4px 8px",borderRadius:6,fontSize:11}},
+            h("option",{value:"release"},"Sort: Release Order"),
+            h("option",{value:"price-desc"},"Sort: Price High → Low"),
+            h("option",{value:"price-asc"},"Sort: Price Low → High"),
+            h("option",{value:"metric-desc"},"Sort: Value Metric High → Low"),
           )
         )
       ),
 
-      // Metric legend
-      h("div", { style:{ background:"rgba(96,165,250,0.08)", border:"1px solid rgba(96,165,250,0.2)", borderRadius:7, padding:"8px 14px", marginBottom:10, fontSize:11, color:"#94A3B8" } },
-        h("span", { style:{ color:"#60A5FA", fontWeight:600 } }, "📊 Value Metric"),
-        " = Sum of top 5 cards ÷ Box price.  ",
-        h("span", { style:{ color:"#34D399" } }, "Green ≥5x"), " · ",
-        h("span", { style:{ color:"#FFD700" } }, "Yellow ≥2x"), " · ",
-        h("span", { style:{ color:"#60A5FA" } }, "Blue ≥1x"), " · ",
-        h("span", { style:{ color:"#F87171" } }, "Red <1x"),
+      // Legend
+      h("div",{style:{background:"rgba(96,165,250,0.08)",border:"1px solid rgba(96,165,250,0.2)",borderRadius:7,padding:"8px 14px",marginBottom:8,fontSize:11,color:"#94A3B8"}},
+        h("span",{style:{color:"#60A5FA",fontWeight:600}},"📊 Value Metric")," = Sum of top 5 cards ÷ Box price.  ",
+        h("span",{style:{color:"#34D399"}},"Green ≥5x")," · ",h("span",{style:{color:"#FFD700"}},"Yellow ≥2x")," · ",h("span",{style:{color:"#60A5FA"}},"Blue ≥1x")," · ",h("span",{style:{color:"#F87171"}},"Red <1x"),
         ". Click any set to expand top 5 cards."
       ),
-      h("div", { style:{ fontSize:11, color:"#475569", marginBottom:16, fontStyle:"italic" } },
-        "Prices fetched live from TCGPlayer via TCGCSV. Cards marked ",
-        h("span", { style:{ color:"#F59E0B" } }, "⚠ manual"),
-        " use last-sale data where market price is unavailable. Always verify before purchasing."
+      h("div",{style:{fontSize:11,color:"#475569",marginBottom:14,fontStyle:"italic"}},
+        "Prices from TCGPlayer via TCGCSV. Cards marked ",h("span",{style:{color:"#F59E0B"}},"⚠ manual")," use last-sale data where market price is unavailable. Always verify before purchasing."
       ),
 
-      // ── Set Grid ──
-      h("div", { style:{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))", gap:12 } },
-        filtered.map(set => {
-          const tc = TIER_CONFIG[set.tier] || TIER_CONFIG.hold;
-          const isOpen = expanded === set.id;
-          const hasCards = set.top5.length > 0 && set.top5[0].price > 0;
+      // Grid
+      h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:12}},
+        filtered.map(set=>{
+          const tc=TIER_CONFIG[set.tier]||TIER_CONFIG.hold;
+          const metric=getMetric(set.id,set.price);
+          const isOpen=expanded===set.id;
+          const mcolor=metric?mc(metric.ratio):"#64748B";
+          const hasCards=metric&&metric.cards.length>0;
 
-          return h("div", { key:set.id, style:{ background:"linear-gradient(135deg,#111827 0%,#0f172a 100%)", border:"1px solid " + (isOpen ? tc.color : tc.border), borderRadius:11, overflow:"hidden", transition:"box-shadow 0.15s" } },
+          return h("div",{key:set.id,style:{background:"linear-gradient(135deg,#111827 0%,#0f172a 100%)",border:"1px solid "+(isOpen?tc.color:tc.border),borderRadius:11,overflow:"hidden"}},
 
-            // Card header (clickable)
-            h("div", { style:{ padding:"14px 16px", cursor:"pointer", position:"relative" }, onClick:()=>setExpanded(isOpen ? null : set.id) },
-              h("div", { style:{ position:"absolute", top:0, left:0, right:0, height:3, background:tc.color, opacity:0.7 } }),
-              h("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginTop:4, marginBottom:6 } },
-                h("div", null,
-                  h("span", { style:{ fontSize:10, color:"#64748B", letterSpacing:"0.12em", textTransform:"uppercase" } }, TYPE_LABELS[set.type]),
-                  h("div", { style:{ fontSize:11, color:"#94A3B8", fontFamily:"monospace", marginTop:1 } }, set.code)
+            h("div",{style:{padding:"14px 16px",cursor:"pointer",position:"relative"},onClick:()=>setExpanded(isOpen?null:set.id)},
+              h("div",{style:{position:"absolute",top:0,left:0,right:0,height:3,background:tc.color,opacity:0.7}}),
+              h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginTop:4,marginBottom:6}},
+                h("div",null,
+                  h("span",{style:{fontSize:10,color:"#64748B",letterSpacing:"0.12em",textTransform:"uppercase"}},TYPE_LABELS[set.type]),
+                  h("div",{style:{fontSize:11,color:"#94A3B8",fontFamily:"monospace",marginTop:1}},set.code)
                 ),
-                h("span", { style:{ fontSize:10, padding:"3px 8px", borderRadius:20, background:tc.bg, color:tc.color, border:"1px solid "+tc.border, whiteSpace:"nowrap" } }, tc.label)
+                h("span",{style:{fontSize:10,padding:"3px 8px",borderRadius:20,background:tc.bg,color:tc.color,border:"1px solid "+tc.border,whiteSpace:"nowrap"}},tc.label)
               ),
-              h("div", { style:{ fontSize:16, fontWeight:700, color:"#F1F5F9", marginBottom:2 } }, set.name),
-              h("div", { style:{ fontSize:11, color:"#64748B", marginBottom:10 } }, "Released: " + set.release + " · " + set.packs + " packs/box"),
-
-              // Price + metric row
-              h("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 } },
-                h("div", null,
-                  h("div", { style:{ fontSize:24, fontWeight:800, color: loadState==="done" ? tc.color : "#475569", lineHeight:1 } },
-                    loadState === "loading" ? "…" : (set.price ? fmt(set.price) : "N/A")
-                  ),
-                  h("div", { style:{ fontSize:10, color:"#64748B", marginTop:2 } }, "sealed box (market)")
+              h("div",{style:{fontSize:16,fontWeight:700,color:"#F1F5F9",marginBottom:2}},set.name),
+              h("div",{style:{fontSize:11,color:"#64748B",marginBottom:10}},"Released: "+set.release+" · "+set.packs+" packs/box"),
+              h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}},
+                h("div",null,
+                  h("div",{style:{fontSize:24,fontWeight:800,color:tc.color,lineHeight:1}},fmt(set.price)),
+                  h("div",{style:{fontSize:10,color:"#64748B",marginTop:2}},"sealed box (market)")
                 ),
-                set.ratio && h("div", { style:{ textAlign:"right" } },
-                  h("div", { style:{ fontSize:20, fontWeight:800, color:set.metricColor, lineHeight:1 } }, set.ratio + "x"),
-                  h("div", { style:{ fontSize:10, color:"#64748B", marginTop:2 } }, "value metric")
+                metric&&h("div",{style:{textAlign:"right"}},
+                  h("div",{style:{fontSize:20,fontWeight:800,color:mcolor,lineHeight:1}},metric.ratio+"x"),
+                  h("div",{style:{fontSize:10,color:"#64748B",marginTop:2}},"value metric")
                 )
               ),
-
-              // Notes + #1 card
-              h("div", { style:{ borderTop:"1px solid rgba(255,255,255,0.07)", paddingTop:8 } },
-                hasCards && h("div", { style:{ fontSize:11, marginBottom:4 } },
-                  h("span", { style:{ color:"#FFD700" } }, "#1 card: "),
-                  h("span", { style:{ color:"#60A5FA" } }, set.top5[0].name),
-                  h("span", { style:{ color:"#34D399", marginLeft:6, fontWeight:700 } }, fmt(set.top5[0].price)),
-                  set.top5[0].manual && h("span", { style:{ color:"#F59E0B", marginLeft:6, fontSize:10 } }, "⚠ manual")
+              h("div",{style:{borderTop:"1px solid rgba(255,255,255,0.07)",paddingTop:8}},
+                hasCards&&h("div",{style:{fontSize:11,marginBottom:4}},
+                  h("span",{style:{color:"#FFD700"}},"#1 card: "),
+                  h("span",{style:{color:"#60A5FA"}},metric.cards[0].name),
+                  h("span",{style:{color:"#34D399",marginLeft:6,fontWeight:700}},fmt(metric.cards[0].price)),
+                  metric.cards[0].manual&&h("span",{style:{color:"#F59E0B",marginLeft:6,fontSize:10}},"⚠ manual")
                 ),
-                h("div", { style:{ fontSize:11, color:"#64748B", lineHeight:1.5, marginBottom:6 } }, set.notes),
-                h("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"center" } },
-                  React.createElement(TrendIcon, { trend: set.tier === "new" ? "new" : set.tier === "trophy" ? "up" : "stable" }),
-                  h("span", { style:{ fontSize:11, color:"#475569" } }, isOpen ? "▲ Hide" : "▼ Top 5 cards")
+                h("div",{style:{fontSize:11,color:"#64748B",lineHeight:1.5,marginBottom:6}},set.notes),
+                h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
+                  React.createElement(TrendIcon,{tier:set.tier}),
+                  h("span",{style:{fontSize:11,color:"#475569"}},isOpen?"▲ Hide":"▼ Top 5 cards")
                 )
               )
             ),
 
-            // Expandable top 5
-            isOpen && h("div", { style:{ background:"rgba(0,0,0,0.35)", borderTop:"1px solid rgba(255,255,255,0.07)", padding:"12px 16px" } },
-              h("div", { style:{ fontSize:10, color:"#94A3B8", marginBottom:8, letterSpacing:"0.1em", textTransform:"uppercase" } }, "Top 5 Cards — Ungraded EN Market Price"),
+            isOpen&&h("div",{style:{background:"rgba(0,0,0,0.35)",borderTop:"1px solid rgba(255,255,255,0.07)",padding:"12px 16px"}},
+              h("div",{style:{fontSize:10,color:"#94A3B8",marginBottom:8,letterSpacing:"0.1em",textTransform:"uppercase"}},"Top 5 Cards — Ungraded EN Market Price"),
               hasCards
-                ? set.top5.map((card, i) =>
-                    h("div", { key:i, style:{ padding:"5px 0", borderBottom: i<set.top5.length-1 ? "1px solid rgba(255,255,255,0.05)" : "none" } },
-                      h("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8 } },
-                        h("div", { style:{ flex:1, minWidth:0 } },
-                          h("span", { style:{ fontSize:10, color:"#475569", marginRight:4 } }, "#"+(i+1)),
-                          h("span", { style:{ fontSize:11, color:"#CBD5E1" } }, card.name),
-                          h("span", { style:{ fontSize:10, color:"#475569", marginLeft:4, fontFamily:"monospace" } }, "["+card.id+"]"),
-                          card.manual && h("span", { style:{ fontSize:10, color:"#F59E0B", marginLeft:5 } }, "⚠ manual")
-                        ),
-                        h("span", { style:{ fontSize:12, fontWeight:700, color: i===0 ? "#FFD700" : "#94A3B8", whiteSpace:"nowrap" } }, fmt(card.price))
+                ? metric.cards.map((card,i)=>h("div",{key:i,style:{padding:"5px 0",borderBottom:i<metric.cards.length-1?"1px solid rgba(255,255,255,0.05)":"none"}},
+                    h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}},
+                      h("div",{style:{flex:1,minWidth:0}},
+                        h("span",{style:{fontSize:10,color:"#475569",marginRight:4}},"#"+(i+1)),
+                        h("span",{style:{fontSize:11,color:"#CBD5E1"}},card.name),
+                        h("span",{style:{fontSize:10,color:"#475569",marginLeft:4,fontFamily:"monospace"}},"["+card.code+"]"),
+                        card.manual&&h("span",{style:{fontSize:10,color:"#F59E0B",marginLeft:5}},"⚠ manual")
                       ),
-                      card.manual && card.manualNote && h("div", { style:{ fontSize:10, color:"#78716C", marginTop:2, marginLeft:14, fontStyle:"italic" } }, card.manualNote)
-                    )
-                  )
-                : h("div", { style:{ fontSize:11, color:"#475569", fontStyle:"italic" } }, "No card price data available yet."),
-
-              // Summary
-              hasCards && h("div", { style:{ marginTop:10, paddingTop:8, borderTop:"1px solid rgba(255,255,255,0.1)" } },
-                h("div", { style:{ display:"flex", justifyContent:"space-between", marginBottom:3 } },
-                  h("span", { style:{ fontSize:11, color:"#94A3B8" } }, "Top 5 Sum"),
-                  h("span", { style:{ fontSize:13, fontWeight:700, color:"#60A5FA" } }, fmt(set.sum))
-                ),
-                h("div", { style:{ display:"flex", justifyContent:"space-between", marginBottom:3 } },
-                  h("span", { style:{ fontSize:11, color:"#94A3B8" } }, "Box Price"),
-                  h("span", { style:{ fontSize:13, fontWeight:700, color:"#94A3B8" } }, fmt(set.price))
-                ),
-                set.ratio && h("div", { style:{ display:"flex", justifyContent:"space-between" } },
-                  h("span", { style:{ fontSize:11, color:"#94A3B8" } }, "Value Metric"),
-                  h("span", { style:{ fontSize:16, fontWeight:800, color:set.metricColor } }, set.ratio + "x")
-                )
+                      h("span",{style:{fontSize:12,fontWeight:700,color:i===0?"#FFD700":"#94A3B8",whiteSpace:"nowrap"}},fmt(card.price))
+                    ),
+                    card.manual&&card.manualNote&&h("div",{style:{fontSize:10,color:"#78716C",marginTop:2,marginLeft:14,fontStyle:"italic"}},card.manualNote)
+                  ))
+                : h("div",{style:{fontSize:11,color:"#475569",fontStyle:"italic"}},"No card price data available yet."),
+              hasCards&&h("div",{style:{marginTop:10,paddingTop:8,borderTop:"1px solid rgba(255,255,255,0.1)"}},
+                h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:3}},h("span",{style:{fontSize:11,color:"#94A3B8"}},"Top 5 Sum"),h("span",{style:{fontSize:13,fontWeight:700,color:"#60A5FA"}},fmt(metric.sum))),
+                h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:3}},h("span",{style:{fontSize:11,color:"#94A3B8"}},"Box Price"),h("span",{style:{fontSize:13,fontWeight:700,color:"#94A3B8"}},fmt(set.price))),
+                h("div",{style:{display:"flex",justifyContent:"space-between"}},h("span",{style:{fontSize:11,color:"#94A3B8"}},"Value Metric"),h("span",{style:{fontSize:16,fontWeight:800,color:mcolor}},metric.ratio+"x"))
               ),
-              h("div", { style:{ fontSize:10, color:"#475569", marginTop:8, fontStyle:"italic" } }, "⚠ Ultra-rare pulls. Actual EV per box is much lower. Always verify before purchasing.")
+              h("div",{style:{fontSize:10,color:"#475569",marginTop:8,fontStyle:"italic"}},"⚠ Ultra-rare pulls. Actual EV per box is much lower. Always verify before purchasing.")
             )
           );
         })
       ),
 
-      // ── Investment Notes ──
-      h("div", { style:{ marginTop:36, background:"rgba(255,215,0,0.05)", border:"1px solid rgba(255,215,0,0.2)", borderRadius:11, padding:"18px 20px" } },
-        h("h3", { style:{ color:"#FFD700", marginTop:0, marginBottom:10, fontSize:14, letterSpacing:"0.05em" } }, "📊 Investment Notes"),
-        h("div", { style:{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))", gap:12, fontSize:11, color:"#94A3B8", lineHeight:1.7 } },
-          h("div", null, h("strong", { style:{ color:"#CBD5E1" } }, "Block 1 Rotation"), h("br"), "OP01–OP04 rotated out of Standard Apr 2026. Box prices are collector-driven — rotation reinforces their vintage status."),
-          h("div", null, h("strong", { style:{ color:"#CBD5E1" } }, "Reprint Policy"), h("br"), "Bandai does limited reprints. Historical dips are ~20–25% before recovering. LCS generally don't receive additional waves."),
-          h("div", null, h("strong", { style:{ color:"#CBD5E1" } }, "Best Entry Points"), h("br"), "OP08, OP10, OP12, and OP14 offer the lowest-risk entries with room to grow as supply tightens."),
-          h("div", null, h("strong", { style:{ color:"#CBD5E1" } }, "Value Metric Note"), h("br"), "The metric uses ultra-rare pull values. True expected value per box is much lower. Use as a ceiling indicator only."),
+      // Investment notes
+      h("div",{style:{marginTop:36,background:"rgba(255,215,0,0.05)",border:"1px solid rgba(255,215,0,0.2)",borderRadius:11,padding:"18px 20px",marginBottom:20}},
+        h("h3",{style:{color:"#FFD700",marginTop:0,marginBottom:10,fontSize:14,letterSpacing:"0.05em"}},"📊 Investment Notes"),
+        h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:12,fontSize:11,color:"#94A3B8",lineHeight:1.7}},
+          h("div",null,h("strong",{style:{color:"#CBD5E1"}},"Block 1 Rotation"),h("br"),"OP01–OP04 rotated out of Standard Apr 2026. Box prices are collector-driven — rotation reinforces their vintage status."),
+          h("div",null,h("strong",{style:{color:"#CBD5E1"}},"Reprint Policy"),h("br"),"Bandai does limited reprints. Historical dips ~20–25% before recovering. LCS generally don't receive additional waves."),
+          h("div",null,h("strong",{style:{color:"#CBD5E1"}},"Best Entry Points"),h("br"),"OP08, OP10, OP12, and OP14 offer the lowest-risk entries with room to grow as supply tightens."),
+          h("div",null,h("strong",{style:{color:"#CBD5E1"}},"Value Metric Note"),h("br"),"The metric uses ultra-rare pull values. True EV per box is much lower. Use as a ceiling indicator only.")
         )
       )
     )
