@@ -9,6 +9,9 @@
 body { background: #0A0E1A; color: #E2E8F0; font-family: Georgia, serif; }
 button { font-family: Georgia, serif; cursor: pointer; border: none; }
 select { font-family: Georgia, serif; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
 
 #header {
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
@@ -20,8 +23,7 @@ select { font-family: Georgia, serif; }
 }
 #header::before {
   content: '';
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: radial-gradient(circle at 20% 50%, rgba(255,215,0,0.06) 0%, transparent 60%),
               radial-gradient(circle at 80% 50%, rgba(96,165,250,0.06) 0%, transparent 60%);
 }
@@ -34,51 +36,38 @@ h2 { font-size: clamp(13px, 3vw, 18px); color: #FFD700; font-weight: 400; font-s
 .stat-val { font-size: 20px; font-weight: 700; color: #FFD700; }
 .stat-label { font-size: 10px; color: #94A3B8; letter-spacing: 0.1em; }
 
-#body { padding: 16px; max-width: 1100px; margin: 0 auto; }
+/* Nav */
+.nav-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.nav-tab { padding: 12px 20px; font-size: 12px; cursor: pointer; color: #64748B; border: none; background: none; border-bottom: 2px solid transparent; letter-spacing: 0.05em; transition: all 0.2s; }
+.nav-tab.active { color: #FFD700; border-bottom-color: #FFD700; }
 
+#body { padding: 16px; max-width: 1100px; margin: 0 auto; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Guide */
 .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
 .filter-label { font-size: 10px; color: #64748B; letter-spacing: 0.1em; text-transform: uppercase; }
-.filter-btn {
-  padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;
-  border: 1px solid rgba(255,255,255,0.15); background: transparent; color: #94A3B8;
-  transition: all 0.2s;
-}
+.filter-btn { padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: #94A3B8; transition: all 0.2s; }
 .filter-btn.active-type { border-color: #FFD700; background: rgba(255,215,0,0.15); color: #FFD700; }
 .filter-btn.active-tier { border-color: #60A5FA; background: rgba(96,165,250,0.15); color: #60A5FA; }
-.sort-select {
-  margin-left: auto; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
-  color: #CBD5E1; padding: 4px 8px; border-radius: 6px; font-size: 11px;
-}
-
-.legend {
-  background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2);
-  border-radius: 7px; padding: 8px 14px; margin-bottom: 8px; font-size: 11px; color: #94A3B8;
-}
+.sort-select { margin-left: auto; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: #CBD5E1; padding: 4px 8px; border-radius: 6px; font-size: 11px; }
+.legend { background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2); border-radius: 7px; padding: 8px 14px; margin-bottom: 8px; font-size: 11px; color: #94A3B8; }
 .disclaimer { font-size: 11px; color: #475569; margin-bottom: 14px; font-style: italic; }
-
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
 
-.card {
-  background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
-  border-radius: 11px; overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.1);
-  transition: border-color 0.2s;
-}
+.card { background: linear-gradient(135deg, #111827 0%, #0f172a 100%); border-radius: 11px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
 .card.open { border-color: var(--tier-color); }
-.card-top { position: absolute; top: 0; left: 0; right: 0; height: 3px; opacity: 0.7; }
 .card-header { padding: 14px 16px; cursor: pointer; position: relative; }
 .card-type { font-size: 10px; color: #64748B; letter-spacing: 0.12em; text-transform: uppercase; }
 .card-code { font-size: 11px; color: #94A3B8; font-family: monospace; margin-top: 1px; }
-.tier-badge {
-  font-size: 10px; padding: 3px 8px; border-radius: 20px; white-space: nowrap;
-  border: 1px solid var(--tier-border); background: var(--tier-bg); color: var(--tier-color);
-}
+.tier-badge { font-size: 10px; padding: 3px 8px; border-radius: 20px; white-space: nowrap; border: 1px solid var(--tier-border); background: var(--tier-bg); color: var(--tier-color); }
 .card-name { font-size: 16px; font-weight: 700; color: #F1F5F9; margin-bottom: 2px; }
 .card-meta { font-size: 11px; color: #64748B; margin-bottom: 10px; }
 .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .box-price { font-size: 24px; font-weight: 800; line-height: 1; }
 .box-price-label { font-size: 10px; color: #64748B; margin-top: 2px; }
-.metric-val { font-size: 20px; font-weight: 800; line-height: 1; text-align: right; }
+.metric-val { font-size: 16px; font-weight: 800; line-height: 1; }
 .metric-label { font-size: 10px; color: #64748B; margin-top: 2px; }
 .card-footer { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 8px; }
 .top1 { font-size: 11px; margin-bottom: 4px; }
@@ -86,11 +75,7 @@ h2 { font-size: clamp(13px, 3vw, 18px); color: #FFD700; font-weight: 400; font-s
 .card-footer-row { display: flex; justify-content: space-between; align-items: center; }
 .trend { font-size: 12px; }
 .expand-hint { font-size: 11px; color: #475569; }
-
-.card-expand {
-  background: rgba(0,0,0,0.35); border-top: 1px solid rgba(255,255,255,0.07);
-  padding: 12px 16px; display: none;
-}
+.card-expand { background: rgba(0,0,0,0.35); border-top: 1px solid rgba(255,255,255,0.07); padding: 12px 16px; display: none; }
 .card.open .card-expand { display: block; }
 .expand-title { font-size: 10px; color: #94A3B8; margin-bottom: 8px; letter-spacing: 0.1em; text-transform: uppercase; }
 .card-row { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -109,14 +94,23 @@ h2 { font-size: clamp(13px, 3vw, 18px); color: #FFD700; font-weight: 400; font-s
 .summary-metric { font-size: 16px; font-weight: 800; }
 .ev-warning { font-size: 10px; color: #475569; margin-top: 8px; font-style: italic; }
 .no-cards { font-size: 11px; color: #475569; font-style: italic; }
-
-.notes-box {
-  margin-top: 36px; background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2);
-  border-radius: 11px; padding: 18px 20px; margin-bottom: 20px;
-}
-.notes-box h3 { color: #FFD700; margin-bottom: 10px; font-size: 14px; letter-spacing: 0.05em; }
+.notes-box { margin-top: 36px; background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2); border-radius: 11px; padding: 18px 20px; margin-bottom: 20px; }
+.notes-box h3 { color: #FFD700; margin-bottom: 10px; font-size: 14px; }
 .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; font-size: 11px; color: #94A3B8; line-height: 1.7; }
 .notes-grid strong { color: #CBD5E1; }
+
+/* Chart tab */
+.chart-controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.chart-controls label { font-size: 11px; color: #94A3B8; display: flex; align-items: center; gap: 6px; }
+.chart-controls select { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: #CBD5E1; padding: 4px 8px; border-radius: 6px; font-size: 11px; }
+.set-toggles { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 14px; }
+.set-toggle { padding: 3px 9px; border-radius: 20px; font-size: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: #475569; transition: all 0.15s; }
+.set-toggle.on { color: #E2E8F0; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.08); }
+.chart-box { background: #0f172a; border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 20px 16px 12px; overflow-x: auto; }
+.chart-legend-wrap { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #64748B; cursor: pointer; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.chart-note { font-size: 11px; color: #475569; margin-top: 10px; font-style: italic; }
 </style>
 </head>
 <body>
@@ -132,79 +126,170 @@ h2 { font-size: clamp(13px, 3vw, 18px); color: #FFD700; font-weight: 400; font-s
   </div>
 </div>
 
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="switchTab('guide')">📋 Price Guide</button>
+  <button class="nav-tab" onclick="switchTab('chart')">📈 Price History</button>
+</div>
+
 <div id="body">
-  <div class="filters" id="filters">
-    <span class="filter-label">Type:</span>
-    <button class="filter-btn active-type" data-filter-type="all">All</button>
-    <button class="filter-btn" data-filter-type="main">Main Set</button>
-    <button class="filter-btn" data-filter-type="extra">Extra Booster</button>
-    <button class="filter-btn" data-filter-type="premium">Premium Booster</button>
-    <span class="filter-label" style="margin-left:6px">Tier:</span>
-    <button class="filter-btn active-tier" data-filter-tier="all">All Tiers</button>
-    <button class="filter-btn" data-filter-tier="trophy">🏆 Trophy</button>
-    <button class="filter-btn" data-filter-tier="hold">⚓ Solid Hold</button>
-    <button class="filter-btn" data-filter-tier="watch">👁 Watch</button>
-    <button class="filter-btn" data-filter-tier="new">🆕 New Release</button>
-    <select class="sort-select" id="sort-select">
-      <option value="release">Sort: Release Order</option>
-      <option value="price-desc">Sort: Price High → Low</option>
-      <option value="price-asc">Sort: Price Low → High</option>
-      <option value="metric-desc">Sort: Value Metric High → Low</option>
-    </select>
-  </div>
 
-  <div class="legend">
-    <span style="color:#60A5FA;font-weight:600">📊 Value Metrics</span> = Sum of top 5 (or top 10) cards ÷ Box price. &nbsp;
-    <span style="color:#34D399">Green ≥5x</span> ·
-    <span style="color:#FFD700">Yellow ≥2x</span> ·
-    <span style="color:#60A5FA">Blue ≥1x</span> ·
-    <span style="color:#F87171">Red &lt;1x</span>.
-    Click any set to expand top 5 cards.
-  </div>
-  <div class="disclaimer">
-    Prices from TCGPlayer via TCGCSV. Cards marked <span style="color:#F59E0B">⚠ manual</span> use last-sale data where market price is unavailable. Always verify before purchasing.
-  </div>
-
-  <div class="grid" id="grid"></div>
-
-  <div class="notes-box">
-    <h3>📊 Investment Notes</h3>
-    <div class="notes-grid">
-      <div><strong>Block 1 Rotation</strong><br>OP01–OP04 rotated out of Standard Apr 2026. Box prices are collector-driven — rotation reinforces their vintage status.</div>
-      <div><strong>Reprint Policy</strong><br>Bandai does limited reprints. Historical dips ~20–25% before recovering. LCS generally don't receive additional waves.</div>
-      <div><strong>Best Entry Points</strong><br>OP08, OP10, OP12, and OP14 offer the lowest-risk entries with room to grow as supply tightens.</div>
-      <div><strong>Value Metric Note</strong><br>The metric uses ultra-rare pull values. True EV per box is much lower. Use as a ceiling indicator only.</div>
+  <!-- GUIDE TAB -->
+  <div id="tab-guide" class="tab-content active">
+    <div class="filters" id="filters">
+      <span class="filter-label">Type:</span>
+      <button class="filter-btn active-type" data-filter-type="all">All</button>
+      <button class="filter-btn" data-filter-type="main">Main Set</button>
+      <button class="filter-btn" data-filter-type="extra">Extra Booster</button>
+      <button class="filter-btn" data-filter-type="premium">Premium Booster</button>
+      <span class="filter-label" style="margin-left:6px">Tier:</span>
+      <button class="filter-btn active-tier" data-filter-tier="all">All Tiers</button>
+      <button class="filter-btn" data-filter-tier="trophy">🏆 Trophy</button>
+      <button class="filter-btn" data-filter-tier="hold">⚓ Solid Hold</button>
+      <button class="filter-btn" data-filter-tier="watch">👁 Watch</button>
+      <button class="filter-btn" data-filter-tier="new">🆕 New Release</button>
+      <select class="sort-select" id="sort-select">
+        <option value="release">Sort: Release Order</option>
+        <option value="price-desc">Sort: Price High → Low</option>
+        <option value="price-asc">Sort: Price Low → High</option>
+        <option value="metric-desc">Sort: Top 5 Metric High → Low</option>
+        <option value="metric10-desc">Sort: Top 10 Metric High → Low</option>
+      </select>
+    </div>
+    <div class="legend">
+      <span style="color:#60A5FA;font-weight:600">📊 Value Metrics</span> = Sum of top 5 (or top 10) cards ÷ Box price. &nbsp;
+      <span style="color:#34D399">Green ≥5x</span> · <span style="color:#FFD700">Yellow ≥2x</span> · <span style="color:#60A5FA">Blue ≥1x</span> · <span style="color:#F87171">Red &lt;1x</span>.
+      Click any set to expand top 10 cards.
+    </div>
+    <div class="disclaimer">Prices from TCGPlayer via TCGCSV. Cards marked <span style="color:#F59E0B">⚠ manual</span> use last-sale data where market price is unavailable. Always verify before purchasing.</div>
+    <div class="grid" id="grid"></div>
+    <div class="notes-box">
+      <h3>📊 Investment Notes</h3>
+      <div class="notes-grid">
+        <div><strong>Block 1 Rotation</strong><br>OP01–OP04 rotated out of Standard Apr 2026. Box prices are collector-driven — rotation reinforces their vintage status.</div>
+        <div><strong>Reprint Policy</strong><br>Bandai does limited reprints. Historical dips ~20–25% before recovering. LCS generally don't receive additional waves.</div>
+        <div><strong>Best Entry Points</strong><br>OP08, OP10, OP12, and OP14 offer the lowest-risk entries with room to grow as supply tightens.</div>
+        <div><strong>Value Metric Note</strong><br>The metric uses ultra-rare pull values. True EV per box is much lower. Use as a ceiling indicator only.</div>
+      </div>
     </div>
   </div>
+
+  <!-- CHART TAB -->
+  <div id="tab-chart" class="tab-content">
+    <div class="chart-controls">
+      <label>Metric:
+        <select id="chart-metric" onchange="renderChart()">
+          <option value="price">Box Market Price ($)</option>
+          <option value="metric5">Top 5 Value Metric (x)</option>
+          <option value="metric10">Top 10 Value Metric (x)</option>
+        </select>
+      </label>
+      <label>Type:
+        <select id="chart-type" onchange="buildToggles(); renderChart()">
+          <option value="all">All types</option>
+          <option value="main">Main Sets only</option>
+          <option value="extra">Extra Boosters only</option>
+          <option value="premium">Premium Boosters only</option>
+        </select>
+      </label>
+    </div>
+    <div class="set-toggles" id="set-toggles"></div>
+    <div class="chart-box">
+      <canvas id="chart-canvas" height="420"></canvas>
+    </div>
+    <div class="chart-legend-wrap" id="chart-legend"></div>
+    <div class="chart-note">Each data point = one TCGCSV price update. More history accumulates with each update run.</div>
+  </div>
+
 </div>
 
 <script>
-const LAST_UPDATED = "May 4, 2026";
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const LAST_UPDATED = "May 9, 2026";
 
+// ─── PRICE HISTORY ────────────────────────────────────────────────────────────
+// Add a new entry each update. sum5/sum10 = top-5 and top-10 card price sums.
+const PRICE_HISTORY = [
+  {
+    date: "May 4, 2026",
+    data: {
+      "OP01-W1": { price:5831.75, sum5:2045.85+855.26+556.77+465.25+431.54,       sum10:2045.85+855.26+556.77+465.25+431.54+245.64+151.43+143.41+138.41+138.23 },
+      "OP01-W2": { price:1841.54, sum5:2045.85+855.26+556.77+465.25+431.54,        sum10:2045.85+855.26+556.77+465.25+431.54+245.64+151.43+143.41+138.41+138.23 },
+      "OP02":    { price:496.21,  sum5:1587.96+166.33+143.79+122.35+101.45,        sum10:1587.96+166.33+143.79+122.35+101.45+59.06+47.63+47.15+46.70+44.04 },
+      "OP03":    { price:541.88,  sum5:799.25+361.45+261.46+103.74+94.38,          sum10:799.25+361.45+261.46+103.74+94.38+90.74+89.38+79.19+38.37+35.43 },
+      "OP04":    { price:523.57,  sum5:754.74+726.20+144.12+135.27+101.22,         sum10:754.74+726.20+144.12+135.27+101.22+71.73+55.09+52.54+50.91+46.07 },
+      "OP05":    { price:976.11,  sum5:5700+4747.83+1363.10+795.98+641.72,         sum10:5700+4747.83+1363.10+795.98+641.72+249.07+238.13+206.42+193.10+191.08 },
+      "OP06":    { price:355.38,  sum5:2000.52+343.03+180.60+156.37+101.17,        sum10:2000.52+343.03+180.60+156.37+101.17+89.30+86.03+75.28+67.53+60.01 },
+      "OP07":    { price:294.38,  sum5:1913.35+335.62+110.71+81.99+74.60,          sum10:1913.35+335.62+110.71+81.99+74.60+68.59+57.54+55.17+52.76+48.11 },
+      "OP08":    { price:223.66,  sum5:647.59+255.64+244.40+152.63+119.23,         sum10:647.59+255.64+244.40+152.63+119.23+82.11+60.28+47.49+45.33+32.31 },
+      "OP09":    { price:587.80,  sum5:4500+2089.74+1300.16+1298.87+1147.26,       sum10:4500+2089.74+1300.16+1298.87+1147.26+953.86+752.38+744.61+572.71+240.91 },
+      "OP10":    { price:221.57,  sum5:824.71+194.65+143.58+119.60+59.88,          sum10:824.71+194.65+143.58+119.60+59.88+59.25+50.50+44.31+33.90+33.90 },
+      "OP11":    { price:407.70,  sum5:4048.51+2760.70+1359.02+385.81+186.58,      sum10:4048.51+2760.70+1359.02+385.81+186.58+144.35+138.48+131.92+101.14+93.01 },
+      "OP12":    { price:250.34,  sum5:1293.37+948.62+775.79+177.45+131.02,        sum10:1293.37+948.62+775.79+177.45+131.02+129.78+102.19+70.25+62.94+54.65 },
+      "OP13":    { price:586.70,  sum5:8489.98+4749.98+2025.62+1601.04+1217.59,    sum10:8489.98+4749.98+2025.62+1601.04+1217.59+995.29+838.12+617.09+546.79+525.99 },
+      "OP14":    { price:239.62,  sum5:2336.89+1221.16+955.01+733.85+546.09,       sum10:2336.89+1221.16+955.01+733.85+546.09+158.10+143.15+137.56+132.97+100.37 },
+      "OP15":    { price:208.97,  sum5:1150.74+754.99+445.25+377.14+362.87,        sum10:1150.74+754.99+445.25+377.14+362.87+210.05+206.55+170.29+149.95+131.30 },
+      "OP16":    { price:277.13,  sum5:0, sum10:0 },
+      "EB01":    { price:840.81,  sum5:2427.43+121.49+59.46+54.61+42.83,           sum10:2427.43+121.49+59.46+54.61+42.83+33.13+33.01+24.79+24.43+20.64 },
+      "EB02":    { price:447.74,  sum5:2417+1241+1013.58+803.60+721.24,            sum10:2417+1241+1013.58+803.60+721.24+717.60+586.46+546.50+546.30+493.65 },
+      "EB03":    { price:300.98,  sum5:1275.95+1138.12+970.57+747.33+350.15,       sum10:1275.95+1138.12+970.57+747.33+350.15+302.50+298.66+201.21+147.94 },
+      "PRB01":   { price:843.42,  sum5:3633.33+1965.68+1750+1704.75+1249.99,       sum10:3633.33+1965.68+1750+1704.75+1249.99+1028.33+1000+649.06+573.96+530.29 },
+      "PRB02":   { price:333.85,  sum5:1915.99+702.86+509.73+278.33+276.71,        sum10:1915.99+702.86+509.73+278.33+276.71+230.89+216.90+205.78+198.53+179.17 },
+    }
+  },
+  {
+    date: "May 9, 2026",
+    data: {
+      "OP01-W1": { price:5831.75, sum5:2045.85+853.82+556.77+465.25+421.02,        sum10:2045.85+853.82+556.77+465.25+421.02+234.00+151.47+142.90+135.49+135.33 },
+      "OP01-W2": { price:1841.54, sum5:2045.85+853.82+556.77+465.25+421.02,        sum10:2045.85+853.82+556.77+465.25+421.02+234.00+151.47+142.90+135.49+135.33 },
+      "OP02":    { price:499.19,  sum5:1587.96+166.33+143.79+122.35+101.45,        sum10:1587.96+166.33+143.79+122.35+101.45+59.06+47.63+47.25+46.89+43.10 },
+      "OP03":    { price:530.65,  sum5:799.25+355.03+247.19+103.74+90.56,          sum10:799.25+355.03+247.19+103.74+90.56+89.38+84.60+72.85+38.21+35.16 },
+      "OP04":    { price:520.73,  sum5:747.37+732.20+145.07+127.27+97.05,          sum10:747.37+732.20+145.07+127.27+97.05+71.73+52.19+51.73+50.55+45.57 },
+      "OP05":    { price:988.28,  sum5:5700+4747.83+1363.10+795.98+639.81,         sum10:5700+4747.83+1363.10+795.98+639.81+248.98+226.13+207.60+193.10+182.55 },
+      "OP06":    { price:357.79,  sum5:1953.35+333.22+181.54+151.50+101.45,        sum10:1953.35+333.22+181.54+151.50+101.45+96.89+82.10+74.26+67.02+60.01 },
+      "OP07":    { price:295.96,  sum5:1913.35+336.02+110.14+83.95+75.28,          sum10:1913.35+336.02+110.14+83.95+75.28+68.31+60.74+55.25+47.86+46.98 },
+      "OP08":    { price:225.72,  sum5:647.59+255.71+239.32+152.30+119.23,         sum10:647.59+255.71+239.32+152.30+119.23+80.52+60.33+46.43+44.17+32.95 },
+      "OP09":    { price:588.48,  sum5:4500+2110.82+1332.35+1298.87+1147.26,       sum10:4500+2110.82+1332.35+1298.87+1147.26+945.86+750.18+736.60+572.71+236.75 },
+      "OP10":    { price:220.77,  sum5:824.71+194.97+140.85+117.04+59.93,          sum10:824.71+194.97+140.85+117.04+59.93+59.78+50.86+43.79+33.84+32.63 },
+      "OP11":    { price:405.11,  sum5:4048.51+3165.61+1353.42+365.35+200.08,      sum10:4048.51+3165.61+1353.42+365.35+200.08+143.11+134.94+132.24+100.16+92.74 },
+      "OP12":    { price:246.27,  sum5:1293.37+948.62+795.99+179.98+132.80,        sum10:1293.37+948.62+795.99+179.98+132.80+121.15+103.94+69.80+62.83+54.61 },
+      "OP13":    { price:589.55,  sum5:8489.98+4749.98+2025.62+1601.04+1217.59,    sum10:8489.98+4749.98+2025.62+1601.04+1217.59+995.29+839.88+583.93+542.79+529.74 },
+      "OP14":    { price:258.79,  sum5:2222.30+1193.74+907.09+714.20+540.27,       sum10:2222.30+1193.74+907.09+714.20+540.27+156.58+142.51+137.34+135.00+99.41 },
+      "OP15":    { price:206.24,  sum5:1135.74+752.37+523.71+376.54+352.88,        sum10:1135.74+752.37+523.71+376.54+352.88+222.99+207.09+153.72+148.98+129.47 },
+      "OP16":    { price:276.95,  sum5:0, sum10:0 },
+      "EB01":    { price:835.47,  sum5:2427.43+121.01+59.28+54.60+42.53,           sum10:2427.43+121.01+59.28+54.60+42.53+32.75+32.26+24.35+24.00+20.56 },
+      "EB02":    { price:466.41,  sum5:2417+1241+1013.58+838.45+752.29,            sum10:2417+1241+1013.58+838.45+752.29+717.60+619.80+593.08+586.46+546.30 },
+      "EB03":    { price:320.92,  sum5:1275.95+1134.16+970.57+747.33+365.49,       sum10:1275.95+1134.16+970.57+747.33+365.49+314.03+302.12+201.21+147.94 },
+      "PRB01":   { price:845.40,  sum5:3633.33+1965.68+1750+1704.75+1249.99,       sum10:3633.33+1965.68+1750+1704.75+1249.99+1056.00+1000+649.06+573.96+530.29 },
+      "PRB02":   { price:339.46,  sum5:1985.19+715.86+509.73+282.65+276.04,        sum10:1985.19+715.86+509.73+282.65+276.04+230.89+209.17+199.75+196.08+179.17 },
+    }
+  },
+];
+
+// ─── TOP CARDS (latest — May 9 2026) ─────────────────────────────────────────
 const TOP_CARDS = {
   "OP01-W1": [
     { name:"Shanks (Parallel) (Manga) (Alternate Art)",           code:"454666", price:2045.85 },
-    { name:"Monkey.D.Luffy (003) (Parallel)",                     code:"453506", price:855.26  },
+    { name:"Monkey.D.Luffy (003) (Parallel)",                     code:"453506", price:853.82  },
     { name:"Roronoa Zoro (001) (Parallel)",                       code:"454513", price:556.77  },
     { name:"Trafalgar Law (002) (Parallel)",                      code:"454514", price:465.25  },
-    { name:"Nami (Parallel)",                                     code:"454536", price:431.54  },
-    { name:"Donquixote Doflamingo (060) (Parallel)",              code:"454586", price:245.64  },
-    { name:"Roronoa Zoro (025) (Parallel)",                       code:"453511", price:151.43  },
-    { name:"Crocodile (062) (Parallel)",                          code:"454589", price:143.41  },
-    { name:"Monkey.D.Luffy (024) (Parallel)",                     code:"453509", price:138.41  },
-    { name:"Kaido (061) (Parallel)",                              code:"454587", price:138.23  },
+    { name:"Nami (Parallel)",                                     code:"454536", price:421.02  },
+    { name:"Donquixote Doflamingo (060) (Parallel)",              code:"454586", price:234.00  },
+    { name:"Roronoa Zoro (025) (Parallel)",                       code:"453511", price:151.47  },
+    { name:"Crocodile (062) (Parallel)",                          code:"454589", price:142.90  },
+    { name:"Monkey.D.Luffy (024) (Parallel)",                     code:"453509", price:135.49  },
+    { name:"Kaido (061) (Parallel)",                              code:"454587", price:135.33  },
   ],
   "OP01-W2": [
     { name:"Shanks (Parallel) (Manga) (Alternate Art)",           code:"454666", price:2045.85 },
-    { name:"Monkey.D.Luffy (003) (Parallel)",                     code:"453506", price:855.26  },
+    { name:"Monkey.D.Luffy (003) (Parallel)",                     code:"453506", price:853.82  },
     { name:"Roronoa Zoro (001) (Parallel)",                       code:"454513", price:556.77  },
     { name:"Trafalgar Law (002) (Parallel)",                      code:"454514", price:465.25  },
-    { name:"Nami (Parallel)",                                     code:"454536", price:431.54  },
-    { name:"Donquixote Doflamingo (060) (Parallel)",              code:"454586", price:245.64  },
-    { name:"Roronoa Zoro (025) (Parallel)",                       code:"453511", price:151.43  },
-    { name:"Crocodile (062) (Parallel)",                          code:"454589", price:143.41  },
-    { name:"Monkey.D.Luffy (024) (Parallel)",                     code:"453509", price:138.41  },
-    { name:"Kaido (061) (Parallel)",                              code:"454587", price:138.23  },
+    { name:"Nami (Parallel)",                                     code:"454536", price:421.02  },
+    { name:"Donquixote Doflamingo (060) (Parallel)",              code:"454586", price:234.00  },
+    { name:"Roronoa Zoro (025) (Parallel)",                       code:"453511", price:151.47  },
+    { name:"Crocodile (062) (Parallel)",                          code:"454589", price:142.90  },
+    { name:"Monkey.D.Luffy (024) (Parallel)",                     code:"453509", price:135.49  },
+    { name:"Kaido (061) (Parallel)",                              code:"454587", price:135.33  },
   ],
   "OP02": [
     { name:"Portgas.D.Ace (Parallel) (Manga) (Alternate Art)",   code:"485862", price:1587.96 },
@@ -214,129 +299,129 @@ const TOP_CARDS = {
     { name:"Smoker (093) (Alternate Art)",                        code:"484476", price:101.45  },
     { name:"Nami (Alternate Art)",                                code:"482429", price:59.06   },
     { name:"Magellan (071) (Alternate Art)",                      code:"484134", price:47.63   },
-    { name:"Portgas.D.Ace (Parallel)",                            code:"486333", price:47.15   },
-    { name:"Monkey.D.Luffy (062) (Alternate Art)",                code:"485814", price:46.70   },
-    { name:"Kin'emon (Alternate Art)",                            code:"483629", price:44.04   },
+    { name:"Portgas.D.Ace (Parallel)",                            code:"486333", price:47.25   },
+    { name:"Monkey.D.Luffy (062) (Alternate Art)",                code:"485814", price:46.89   },
+    { name:"Kin'emon (Alternate Art)",                            code:"483629", price:43.10   },
   ],
   "OP03": [
     { name:"Sogeking (Alternate Art) (Manga)",                    code:"500118", price:799.25  },
-    { name:"Monkey.D.Luffy (Wanted Poster)",                      code:"501678", price:361.45  },
-    { name:"Nami (040) (Alternate Art)",                          code:"498254", price:261.46  },
+    { name:"Monkey.D.Luffy (Wanted Poster)",                      code:"501678", price:355.03  },
+    { name:"Nami (040) (Alternate Art)",                          code:"498254", price:247.19  },
     { name:"Charlotte Katakuri (099) (Alternate Art)",            code:"498484", price:103.74  },
-    { name:"Eustass Captain Kid (Wanted Poster)",                 code:"501677", price:94.38   },
-    { name:"Kaido (Wanted Poster)",                               code:"501680", price:90.74   },
+    { name:"Eustass Captain Kid (Wanted Poster)",                 code:"501677", price:90.56   },
     { name:"Portgas.D.Ace (Alternate Art)",                       code:"497934", price:89.38   },
-    { name:"Donquixote Doflamingo (Wanted Poster)",               code:"501679", price:79.19   },
-    { name:"Arlong (Alternate Art)",                              code:"498064", price:38.37   },
-    { name:"Rob Lucci (076) (Alternate Art)",                     code:"498486", price:35.43   },
+    { name:"Kaido (Wanted Poster)",                               code:"501680", price:84.60   },
+    { name:"Donquixote Doflamingo (Wanted Poster)",               code:"501679", price:72.85   },
+    { name:"Arlong (Alternate Art)",                              code:"498064", price:38.21   },
+    { name:"Rob Lucci (076) (Alternate Art)",                     code:"498486", price:35.16   },
   ],
   "OP04": [
-    { name:"Sabo (Alternate Art) (Manga)",                        code:"516558", price:754.74  },
-    { name:"Boa Hancock (SP)",                                    code:"516555", price:726.20  },
-    { name:"Trafalgar Law (SP)",                                  code:"516554", price:144.12  },
-    { name:"Edward.Newgate (SP)",                                 code:"516553", price:135.27  },
-    { name:"Nefeltari Vivi (001) (Alternate Art)",                code:"510774", price:101.22  },
+    { name:"Sabo (Alternate Art) (Manga)",                        code:"516558", price:747.37  },
+    { name:"Boa Hancock (SP)",                                    code:"516555", price:732.20  },
+    { name:"Trafalgar Law (SP)",                                  code:"516554", price:145.07  },
+    { name:"Edward.Newgate (SP)",                                 code:"516553", price:127.27  },
+    { name:"Nefeltari Vivi (001) (Alternate Art)",                code:"510774", price:97.05   },
     { name:"Double Pack Set Volume 1",                            code:"493752", price:71.73   },
-    { name:"Sakazuki (SP)",                                       code:"516557", price:55.09   },
-    { name:"Donquixote Doflamingo (019) (Alternate Art)",         code:"510897", price:52.54   },
-    { name:"Rebecca (039) (Alternate Art)",                       code:"510994", price:50.91   },
-    { name:"Magellan (SP)",                                       code:"516556", price:46.07   },
+    { name:"Sakazuki (SP)",                                       code:"516557", price:52.19   },
+    { name:"Donquixote Doflamingo (019) (Alternate Art)",         code:"510897", price:51.73   },
+    { name:"Rebecca (039) (Alternate Art)",                       code:"510994", price:50.55   },
+    { name:"Magellan (SP)",                                       code:"516556", price:45.57   },
   ],
   "OP05": [
     { name:"Monkey.D.Luffy (119) (Alternate Art) (Manga)",        code:"527026", price:5700.00 },
     { name:"Monkey.D.Luffy (012) (Gold-Stamped Signature)",       code:"529850", price:4747.83 },
     { name:"Trafalgar Law (069) (Alternate Art) (Manga)",         code:"527019", price:1363.10 },
     { name:"Eustass Captain Kid (Alternate Art) (Manga)",         code:"527020", price:795.98  },
-    { name:"Nami (SP)",                                           code:"527035", price:641.72  },
-    { name:"Monkey.D.Luffy (119) (Alternate Art)",                code:"530122", price:249.07  },
-    { name:"Uta (SP)",                                            code:"527038", price:238.13  },
-    { name:"Double Pack Set Volume 2",                            code:"527060", price:206.42  },
+    { name:"Nami (SP)",                                           code:"527035", price:639.81  },
+    { name:"Monkey.D.Luffy (119) (Alternate Art)",                code:"530122", price:248.98  },
+    { name:"Uta (SP)",                                            code:"527038", price:226.13  },
+    { name:"Double Pack Set Volume 2",                            code:"527060", price:207.60  },
     { name:"Enel (100) (SP)",                                     code:"527043", price:193.10  },
-    { name:"Yamato (SP)",                                         code:"527036", price:191.08  },
+    { name:"Yamato (SP)",                                         code:"527036", price:182.55  },
   ],
   "OP06": [
-    { name:"Roronoa Zoro (Alternate Art) (Manga)",                code:"541660", price:2000.52 },
-    { name:"Ms. All Sunday (SP)",                                 code:"541668", price:343.03  },
-    { name:"Nami (TR)",                                           code:"541664", price:180.60  },
-    { name:"Buggy (SP)",                                          code:"541665", price:156.37  },
-    { name:"Rebecca (SP)",                                        code:"541670", price:101.17  },
-    { name:"Roronoa Zoro (Alternate Art)",                        code:"541659", price:89.30   },
-    { name:"Yamato (Alternate Art)",                              code:"539490", price:86.03   },
-    { name:"Sugar (SP)",                                          code:"541667", price:75.28   },
-    { name:"Perona (021) (Alternate Art)",                        code:"541044", price:67.53   },
+    { name:"Roronoa Zoro (Alternate Art) (Manga)",                code:"541660", price:1953.35 },
+    { name:"Ms. All Sunday (SP)",                                 code:"541668", price:333.22  },
+    { name:"Nami (TR)",                                           code:"541664", price:181.54  },
+    { name:"Buggy (SP)",                                          code:"541665", price:151.50  },
+    { name:"Rebecca (SP)",                                        code:"541670", price:101.45  },
+    { name:"Roronoa Zoro (Alternate Art)",                        code:"541659", price:96.89   },
+    { name:"Yamato (Alternate Art)",                              code:"539490", price:82.10   },
+    { name:"Sugar (SP)",                                          code:"541667", price:74.26   },
+    { name:"Perona (021) (Alternate Art)",                        code:"541044", price:67.02   },
     { name:"Double Pack Set Volume 3",                            code:"541542", price:60.01   },
   ],
   "OP07": [
     { name:"Boa Hancock (051) (Parallel) (Manga)",                code:"545841", price:1913.35 },
-    { name:"O-Nami (SP)",                                         code:"545927", price:335.62  },
-    { name:"Donquixote Doflamingo (SP)",                          code:"545923", price:110.71  },
-    { name:"Boa Hancock (038) (Parallel)",                        code:"545823", price:81.99   },
-    { name:"Trafalgar Law (010) (TR)",                            code:"555691", price:74.60   },
-    { name:"Jewelry Bonney (019) (Parallel)",                     code:"545800", price:68.59   },
-    { name:"Boa Hancock (051) (Parallel)",                        code:"545840", price:57.54   },
-    { name:"Eustass Captain Kid (SP)",                            code:"545926", price:55.17   },
-    { name:"Okiku (SP)",                                          code:"545922", price:52.76   },
-    { name:"Double Pack Set Volume 4",                            code:"549493", price:48.11   },
+    { name:"O-Nami (SP)",                                         code:"545927", price:336.02  },
+    { name:"Donquixote Doflamingo (SP)",                          code:"545923", price:110.14  },
+    { name:"Boa Hancock (038) (Parallel)",                        code:"545823", price:83.95   },
+    { name:"Trafalgar Law (010) (TR)",                            code:"555691", price:75.28   },
+    { name:"Jewelry Bonney (019) (Parallel)",                     code:"545800", price:68.31   },
+    { name:"Boa Hancock (051) (Parallel)",                        code:"545840", price:60.74   },
+    { name:"Eustass Captain Kid (SP)",                            code:"545926", price:55.25   },
+    { name:"Double Pack Set Volume 4",                            code:"549493", price:47.86   },
+    { name:"Okiku (SP)",                                          code:"545922", price:46.98   },
   ],
   "OP08": [
     { name:"Silvers Rayleigh (Parallel) (Manga)",                 code:"558162", price:647.59  },
-    { name:"Portgas.D.Ace (SP)",                                  code:"558019", price:255.64  },
-    { name:"Jewelry Bonney (SP)",                                 code:"558165", price:244.40  },
-    { name:"Monkey.D.Luffy (TR)",                                 code:"564551", price:152.63  },
+    { name:"Portgas.D.Ace (SP)",                                  code:"558019", price:255.71  },
+    { name:"Jewelry Bonney (SP)",                                 code:"558165", price:239.32  },
+    { name:"Monkey.D.Luffy (TR)",                                 code:"564551", price:152.30  },
     { name:"Charlotte Pudding (SP)",                              code:"558020", price:119.23  },
-    { name:"Tashigi (SP)",                                        code:"558168", price:82.11   },
-    { name:"Tony Tony.Chopper (001) (Parallel)",                  code:"558022", price:60.28   },
-    { name:"Gecko Moria (SP)",                                    code:"558166", price:47.49   },
-    { name:"Queen (SP)",                                          code:"558167", price:45.33   },
-    { name:"Double Pack Set Volume 5",                            code:"561689", price:32.31   },
+    { name:"Tashigi (SP)",                                        code:"558168", price:80.52   },
+    { name:"Tony Tony.Chopper (001) (Parallel)",                  code:"558022", price:60.33   },
+    { name:"Gecko Moria (SP)",                                    code:"558166", price:46.43   },
+    { name:"Queen (SP)",                                          code:"558167", price:44.17   },
+    { name:"Double Pack Set Volume 5",                            code:"561689", price:32.95   },
   ],
   "OP09": [
     { name:"Gol.D.Roger (Manga) (Foil)", code:"597065", price:4500, manual:true, manualNote:"Last sale 03/12/26 — market price null, low is single-seller listing $30K" },
-    { name:"Monkey.D.Luffy (119) (Manga)",                        code:"597068", price:2089.74 },
-    { name:"Shanks (004) (Manga)",                                code:"596925", price:1300.16 },
+    { name:"Monkey.D.Luffy (119) (Manga)",                        code:"597068", price:2110.82 },
+    { name:"Shanks (004) (Manga)",                                code:"596925", price:1332.35 },
     { name:"Marshall.D.Teach (093) (Manga)",                      code:"597035", price:1298.87 },
     { name:"Buggy (051) (Manga)",                                 code:"596984", price:1147.26 },
-    { name:"Nami (SP)",                                           code:"596918", price:953.86  },
-    { name:"Boa Hancock (SP)",                                    code:"596917", price:752.38  },
-    { name:"Monkey.D.Luffy (Wanted Poster)",                      code:"596915", price:744.61  },
+    { name:"Nami (SP)",                                           code:"596918", price:945.86  },
+    { name:"Boa Hancock (SP)",                                    code:"596917", price:750.18  },
+    { name:"Monkey.D.Luffy (Wanted Poster)",                      code:"596915", price:736.60  },
     { name:"Zoro-Juurou (SP)",                                    code:"596913", price:572.71  },
-    { name:"Shanks (004) (Wanted Poster)",                        code:"596927", price:240.91  },
+    { name:"Shanks (004) (Wanted Poster)",                        code:"596927", price:236.75  },
   ],
   "OP10": [
     { name:"Trafalgar Law (119) (Manga)",                         code:"617173", price:824.71  },
-    { name:"Edward.Newgate (SP)",                                 code:"617176", price:194.65  },
-    { name:"Uso-Hachi (SP)",                                      code:"617177", price:143.58  },
-    { name:"Sanji (SP)",                                          code:"617175", price:119.60  },
-    { name:"Divine Departure (Parallel)",                         code:"617054", price:59.88   },
-    { name:"Charlotte Pudding (SP)",                              code:"617174", price:59.25   },
-    { name:"Charlotte Flampe (SP)",                               code:"617028", price:50.50   },
-    { name:"Portgas.D.Ace (TR)",                                  code:"620135", price:44.31   },
-    { name:"Urouge (SP)",                                         code:"617029", price:33.90   },
-    { name:"Monkey.D.Luffy (118) (Parallel)",                     code:"617170", price:33.90   },
+    { name:"Edward.Newgate (SP)",                                 code:"617176", price:194.97  },
+    { name:"Uso-Hachi (SP)",                                      code:"617177", price:140.85  },
+    { name:"Sanji (SP)",                                          code:"617175", price:117.04  },
+    { name:"Divine Departure (Parallel)",                         code:"617054", price:59.93   },
+    { name:"Charlotte Pudding (SP)",                              code:"617174", price:59.78   },
+    { name:"Charlotte Flampe (SP)",                               code:"617028", price:50.86   },
+    { name:"Portgas.D.Ace (TR)",                                  code:"620135", price:43.79   },
+    { name:"Urouge (SP)",                                         code:"617029", price:33.84   },
+    { name:"Usopp (042) (Parallel)",                              code:"617082", price:32.63   },
   ],
   "OP11": [
     { name:"Monkey.D.Luffy (119) (SP) (Gold)",                    code:"632504", price:4048.51 },
-    { name:"Monkey.D.Luffy (119) (SP)",                           code:"632503", price:2760.70 },
-    { name:"Monkey.D.Luffy (118) (Manga)",                        code:"632499", price:1359.02 },
-    { name:"Luffy-Tarou (SP)",                                    code:"632509", price:385.81  },
-    { name:"Gear Two (Alternate Art)",                            code:"632453", price:186.58  },
-    { name:"Sanji (SP)",                                          code:"632505", price:144.35  },
-    { name:"Shanks (SP)",                                         code:"632508", price:138.48  },
-    { name:"Stussy (SP)",                                         code:"632506", price:131.92  },
-    { name:"Shirahoshi (SP)",                                     code:"632502", price:101.14  },
-    { name:"Nami (041) (Alternate Art)",                          code:"632406", price:93.01   },
+    { name:"Monkey.D.Luffy (119) (SP)",                           code:"632503", price:3165.61 },
+    { name:"Monkey.D.Luffy (118) (Manga)",                        code:"632499", price:1353.42 },
+    { name:"Luffy-Tarou (SP)",                                    code:"632509", price:365.35  },
+    { name:"Gear Two (Alternate Art)",                            code:"632453", price:200.08  },
+    { name:"Sanji (SP)",                                          code:"632505", price:143.11  },
+    { name:"Shanks (SP)",                                         code:"632508", price:134.94  },
+    { name:"Stussy (SP)",                                         code:"632506", price:132.24  },
+    { name:"Shirahoshi (SP)",                                     code:"632502", price:100.16  },
+    { name:"Nami (041) (Alternate Art)",                          code:"632406", price:92.74   },
   ],
   "OP12": [
     { name:"Marshall.D.Teach (SP) (Gold)",                        code:"646573", price:1293.37 },
     { name:"Jewelry Bonney (118) (Manga)",                        code:"643867", price:948.62  },
-    { name:"Marshall.D.Teach (SP) (Silver)",                      code:"646572", price:775.79  },
-    { name:"Zoro-Juurou (SP)",                                    code:"646566", price:177.45  },
-    { name:"Demon Aura Nine Sword Style (Alternate Art)",         code:"643769", price:131.02  },
-    { name:"Portgas.D.Ace (SP)",                                  code:"646571", price:129.78  },
-    { name:"Kuzan (SP)",                                          code:"646567", price:102.19  },
-    { name:"Boeuf Burst (Alternate Art)",                         code:"643797", price:70.25   },
-    { name:"Tashigi (SP)",                                        code:"646565", price:62.94   },
-    { name:"Roronoa Zoro (020) (Alternate Art)",                  code:"643748", price:54.65   },
+    { name:"Marshall.D.Teach (SP) (Silver)",                      code:"646572", price:795.99  },
+    { name:"Zoro-Juurou (SP)",                                    code:"646566", price:179.98  },
+    { name:"Demon Aura Nine Sword Style (Alternate Art)",         code:"643769", price:132.80  },
+    { name:"Portgas.D.Ace (SP)",                                  code:"646571", price:121.15  },
+    { name:"Kuzan (SP)",                                          code:"646567", price:103.94  },
+    { name:"Boeuf Burst (Alternate Art)",                         code:"643797", price:69.80   },
+    { name:"Tashigi (SP)",                                        code:"646565", price:62.83   },
+    { name:"Roronoa Zoro (020) (Alternate Art)",                  code:"643748", price:54.61   },
   ],
   "OP13": [
     { name:"Monkey.D.Luffy (118) (Red Super Alternate Art)",      code:"657401", price:8489.98 },
@@ -345,68 +430,68 @@ const TOP_CARDS = {
     { name:"Shanks - OP09-004 (SP) (Gold)",                       code:"657442", price:1601.04 },
     { name:"Portgas.D.Ace (119) (Super Alternate Art)",           code:"657407", price:1217.59 },
     { name:"Shanks - OP09-004 (SP) (Silver)",                     code:"657443", price:995.29  },
-    { name:"Sabo (120) (Super Alternate Art)",                    code:"657412", price:838.12  },
-    { name:"Portgas.D.Ace (119) (Wanted Poster)",                 code:"657409", price:617.09  },
-    { name:"St. Ethanbaron V. Nusjuro (Parallel)",                code:"657348", price:546.79  },
-    { name:"St. Marcus Mars (Parallel)",                          code:"657368", price:525.99  },
+    { name:"Sabo (120) (Super Alternate Art)",                    code:"657412", price:839.88  },
+    { name:"Portgas.D.Ace (119) (Wanted Poster)",                 code:"657409", price:583.93  },
+    { name:"St. Ethanbaron V. Nusjuro (Parallel)",                code:"657348", price:542.79  },
+    { name:"St. Marcus Mars (Parallel)",                          code:"657368", price:529.74  },
   ],
   "OP14": [
-    { name:"Buggy - OP09-051 (SP) (Gold)",                        code:"671453", price:2336.89 },
-    { name:"Buggy - OP09-051 (SP)",                               code:"671454", price:1221.16 },
-    { name:"Roronoa Zoro - PRB02-006 (SP)",                       code:"670642", price:955.01  },
-    { name:"Dracule Mihawk (Manga)",                              code:"671448", price:733.85  },
-    { name:"Boa Hancock - OP14-112 (SP)",                         code:"671457", price:546.09  },
-    { name:"Sugar - OP10-065 (SP)",                               code:"671455", price:158.10  },
-    { name:"Perona - OP06-093 (SP)",                              code:"671451", price:143.15  },
-    { name:"Dracule Mihawk - OP12-030 (SP)",                      code:"671456", price:137.56  },
-    { name:"You'll Frighten Me... (Alternate Art)",               code:"670875", price:132.97  },
-    { name:"Ground Death (Alternate Art)",                        code:"670874", price:100.37  },
+    { name:"Buggy - OP09-051 (SP) (Gold)",                        code:"671453", price:2222.30 },
+    { name:"Buggy - OP09-051 (SP)",                               code:"671454", price:1193.74 },
+    { name:"Roronoa Zoro - PRB02-006 (SP)",                       code:"670642", price:907.09  },
+    { name:"Dracule Mihawk (Manga)",                              code:"671448", price:714.20  },
+    { name:"Boa Hancock - OP14-112 (SP)",                         code:"671457", price:540.27  },
+    { name:"Sugar - OP10-065 (SP)",                               code:"671455", price:156.58  },
+    { name:"Perona - OP06-093 (SP)",                              code:"671451", price:142.51  },
+    { name:"Dracule Mihawk - OP12-030 (SP)",                      code:"671456", price:137.34  },
+    { name:"You'll Frighten Me... (Alternate Art)",               code:"670875", price:135.00  },
+    { name:"Ground Death (Alternate Art)",                        code:"670874", price:99.41   },
   ],
   "OP15": [
-    { name:"Enel (OP15-118) (Manga)",                             code:"685479", price:1150.74 },
-    { name:"Koby (EB04-044) (Manga)",                             code:"685313", price:754.99  },
-    { name:"Boa Hancock (SP)",                                    code:"685011", price:445.25  },
-    { name:"Zeus (SP)",                                           code:"685009", price:377.14  },
-    { name:"Monkey.D.Luffy (SP)",                                 code:"685194", price:362.87  },
-    { name:"Trafalgar Law (SP)",                                  code:"685017", price:210.05  },
-    { name:"Edward.Newgate (SP)",                                 code:"685019", price:206.55  },
-    { name:"Enel (SP)",                                           code:"685008", price:170.29  },
-    { name:"Sabo (PRB02-014) (SP)",                               code:"685032", price:149.95  },
-    { name:"Smoker & Tashigi (SP)",                               code:"685482", price:131.30  },
+    { name:"Enel (OP15-118) (Manga)",                             code:"685479", price:1135.74 },
+    { name:"Koby (EB04-044) (Manga)",                             code:"685313", price:752.37  },
+    { name:"Boa Hancock (SP)",                                    code:"685011", price:523.71  },
+    { name:"Zeus (SP)",                                           code:"685009", price:376.54  },
+    { name:"Monkey.D.Luffy (SP)",                                 code:"685194", price:352.88  },
+    { name:"Trafalgar Law (SP)",                                  code:"685017", price:222.99  },
+    { name:"Edward.Newgate (SP)",                                 code:"685019", price:207.09  },
+    { name:"Enel (SP)",                                           code:"685008", price:153.72  },
+    { name:"Sabo (PRB02-014) (SP)",                               code:"685032", price:148.98  },
+    { name:"Smoker & Tashigi (SP)",                               code:"685482", price:129.47  },
   ],
   "OP16": [],
   "EB01": [
     { name:"Tony Tony.Chopper (Alternate Art) (Manga)",           code:"544532", price:2427.43 },
-    { name:"Mr.2.Bon.Kurei (Bentham) (Alternate Art)",            code:"544602", price:121.49  },
-    { name:"Tony Tony.Chopper (Alternate Art)",                   code:"544531", price:59.46   },
-    { name:"Laboon (048) (Alternate Art)",                        code:"544584", price:54.61   },
-    { name:"Kouzuki Oden (Alternate Art)",                        code:"544524", price:42.83   },
-    { name:"Brook (046) (Alternate Art)",                         code:"544581", price:33.13   },
-    { name:"Cavendish (Alternate Art)",                           code:"544539", price:33.01   },
-    { name:"Charlotte Flampe (Alternate Art)",                    code:"544595", price:24.79   },
-    { name:"Kyros (Alternate Art)",                               code:"544574", price:24.43   },
-    { name:"Tony Tony.Chopper",                                   code:"544530", price:20.64   },
+    { name:"Mr.2.Bon.Kurei (Bentham) (Alternate Art)",            code:"544602", price:121.01  },
+    { name:"Tony Tony.Chopper (Alternate Art)",                   code:"544531", price:59.28   },
+    { name:"Laboon (048) (Alternate Art)",                        code:"544584", price:54.60   },
+    { name:"Kouzuki Oden (Alternate Art)",                        code:"544524", price:42.53   },
+    { name:"Cavendish (Alternate Art)",                           code:"544539", price:32.75   },
+    { name:"Brook (046) (Alternate Art)",                         code:"544581", price:32.26   },
+    { name:"Kyros (Alternate Art)",                               code:"544574", price:24.35   },
+    { name:"Charlotte Flampe (Alternate Art)",                    code:"544595", price:24.00   },
+    { name:"Tony Tony.Chopper",                                   code:"544530", price:20.56   },
   ],
   "EB02": [
     { name:"Monkey.D.Luffy (061) (Manga)",                        code:"629167", price:2417.00 },
     { name:"Monkey.D.Luffy (SP)",                                 code:"629171", price:1241.00 },
     { name:"Tony Tony.Chopper (SP)",                              code:"629185", price:1013.58 },
-    { name:"Monkey.D.Luffy (010) (Alternate Art)",                code:"629101", price:803.60  },
-    { name:"Yamato (SP)",                                         code:"629176", price:721.24  },
+    { name:"Monkey.D.Luffy (010) (Alternate Art)",                code:"629101", price:838.45  },
+    { name:"Yamato (SP)",                                         code:"629176", price:752.29  },
     { name:"Boa Hancock (SP)",                                    code:"629181", price:717.60  },
+    { name:"Charlotte Pudding (SP)",                              code:"629189", price:619.80  },
+    { name:"Uta (SP)",                                            code:"629173", price:593.08  },
     { name:"Jewelry Bonney (SP)",                                 code:"629180", price:586.46  },
-    { name:"Charlotte Pudding (SP)",                              code:"629189", price:546.50  },
     { name:"Vinsmoke Reiju (SP)",                                 code:"629177", price:546.30  },
-    { name:"Enel (SP)",                                           code:"629172", price:493.65  },
   ],
   "EB03": [
     { name:"Uta (061) (Manga)",                                   code:"672817", price:1275.95 },
-    { name:"Nami (053) (SP)",                                     code:"672827", price:1138.12 },
+    { name:"Nami (053) (SP)",                                     code:"672827", price:1134.16 },
     { name:"Nico Robin (055) (SP)",                               code:"672828", price:970.57  },
     { name:"Boa Hancock (SP)",                                    code:"672823", price:747.33  },
-    { name:"Nefeltari Vivi (024) (SP)",                           code:"672822", price:350.15  },
-    { name:"Perona (045) (SP)",                                   code:"672826", price:302.50  },
-    { name:"Uta (003) (SP)",                                      code:"672820", price:298.66  },
+    { name:"Nefeltari Vivi (024) (SP)",                           code:"672822", price:365.49  },
+    { name:"Perona (045) (SP)",                                   code:"672826", price:314.03  },
+    { name:"Uta (003) (SP)",                                      code:"672820", price:302.12  },
     { name:"Vinsmoke Reiju (SP)",                                 code:"672824", price:201.21  },
     { name:"Koala (SP)",                                          code:"672825", price:147.94  },
   ],
@@ -416,48 +501,57 @@ const TOP_CARDS = {
     { name:"Roronoa Zoro (Manga)",                                code:"587964", price:1750.00 },
     { name:"Tony Tony.Chopper (EB01-006) (Manga)",                code:"587962", price:1704.75 },
     { name:"Shanks (Manga)",                                      code:"587708", price:1249.99 },
-    { name:"Trafalgar Law (OP05-069) (Manga)",                    code:"587959", price:1028.33 },
+    { name:"Trafalgar Law (OP05-069) (Manga)",                    code:"587959", price:1056.00 },
     { name:"Portgas.D.Ace (Manga)",                               code:"587709", price:1000.00 },
     { name:"Eustass Captain Kid (OP05-074) (Manga)",              code:"587960", price:649.06  },
     { name:"Sabo (OP04-083) (Manga)",                             code:"587958", price:573.96  },
     { name:"Sogeking (Manga)",                                    code:"587710", price:530.29  },
   ],
   "PRB02": [
-    { name:"Sanji - OP06-119 (Manga)",                            code:"654637", price:1915.99 },
-    { name:"Gum-Gum Giant (Alternate Art)",                       code:"653835", price:702.86  },
+    { name:"Sanji - OP06-119 (Manga)",                            code:"654637", price:1985.19 },
+    { name:"Gum-Gum Giant (Alternate Art)",                       code:"653835", price:715.86  },
     { name:"Monkey.D.Luffy - EB02-061 (SP)",                      code:"654533", price:509.73  },
-    { name:"Cross Guild (Alternate Art)",                         code:"653834", price:278.33  },
-    { name:"My Era...Begins!! (Alternate Art)",                   code:"653836", price:276.71  },
+    { name:"My Era...Begins!! (Alternate Art)",                   code:"653836", price:282.65  },
+    { name:"Cross Guild (Alternate Art)",                         code:"653834", price:276.04  },
     { name:"DON!! Card (Boa Hancock) (Gold)",                     code:"655116", price:230.89  },
-    { name:"DON!! Card (Nami) (Gold)",                            code:"655899", price:216.90  },
-    { name:"Shanks (SP)",                                         code:"654141", price:205.78  },
-    { name:"Come On!! We'll Fight You!! (Alternate Art)",         code:"653833", price:198.53  },
+    { name:"DON!! Card (Nami) (Gold)",                            code:"655899", price:209.17  },
+    { name:"Shanks (SP)",                                         code:"654141", price:199.75  },
+    { name:"Come On!! We'll Fight You!! (Alternate Art)",         code:"653833", price:196.08  },
     { name:"DON!! Card (GEAR5 Luffy) (Gold)",                     code:"655118", price:179.17  },
   ],
 };
+
+// ─── SETS ─────────────────────────────────────────────────────────────────────
 const SETS = [
   { id:"OP01-W1", code:"OP-01 (Wave 1)", name:"Romance Dawn",              type:"main",    release:"Dec 2022", price:5831.75, tier:"trophy", packs:24, notes:"Blue packaging. The grail — entire cases have sold for $80K." },
   { id:"OP01-W2", code:"OP-01 (Wave 2)", name:"Romance Dawn",              type:"main",    release:"Dec 2022", price:1841.54, tier:"trophy", packs:24, notes:"White packaging. More accessible than Wave 1 but still premium." },
-  { id:"OP02",    code:"OP-02",          name:"Paramount War",             type:"main",    release:"Mar 2023", price:496.21,  tier:"trophy", packs:24, notes:"Very few sealed boxes remain. Benefits from OP01 scarcity." },
-  { id:"OP03",    code:"OP-03",          name:"Pillars of Strength",       type:"main",    release:"Jun 2023", price:541.88,  tier:"trophy", packs:24, notes:"Block 1 set (rotated Apr 2026). Collector demand drives price." },
-  { id:"OP04",    code:"OP-04",          name:"Kingdoms of Intrigue",      type:"main",    release:"Sep 2023", price:523.57,  tier:"trophy", packs:24, notes:"Steady appreciation; Block 1 vintage status reinforced post-rotation." },
-  { id:"OP05",    code:"OP-05",          name:"Awakening of the New Era",  type:"main",    release:"Dec 2023", price:976.11,  tier:"trophy", packs:24, notes:"Most sought-after investment set. Two cards worth more than most sealed boxes." },
-  { id:"OP06",    code:"OP-06",          name:"Wings of the Captain",      type:"main",    release:"Mar 2024", price:355.38,  tier:"hold",   packs:24, notes:"Steady climber; consistent demand from Sanji/Zoro fans." },
-  { id:"OP07",    code:"OP-07",          name:"500 Years in the Future",   type:"main",    release:"Jun 2024", price:294.38,  tier:"hold",   packs:24, notes:"Reliable appreciation tracking the broader market uptrend." },
-  { id:"OP08",    code:"OP-08",          name:"Two Legends",               type:"main",    release:"Sep 2024", price:223.66,  tier:"hold",   packs:24, notes:"Affordable entry point. Rayleigh Manga Rare is the chase." },
-  { id:"OP09",    code:"OP-09",          name:"Emperors in the New World", type:"main",    release:"Dec 2024", price:587.80,  tier:"trophy", packs:24, notes:"Gold Roger alone anchors this in Tier 1." },
-  { id:"OP10",    code:"OP-10",          name:"Royal Blood",               type:"main",    release:"Mar 2025", price:221.57,  tier:"hold",   packs:24, notes:"Low entry point with minimal downside risk as supply tightens." },
-  { id:"OP11",    code:"OP-11",          name:"A Fist of Divine Speed",    type:"main",    release:"Jun 2025", price:407.70,  tier:"hold",   packs:24, notes:"Three major chase cards in one set — rare concentration." },
-  { id:"OP12",    code:"OP-12",          name:"Legacy of the Master",      type:"main",    release:"Sep 2025", price:250.34,  tier:"hold",   packs:24, notes:"Still finding price floor as distribution supply settles." },
-  { id:"OP13",    code:"OP-13",          name:"Carrying On His Will",      type:"main",    release:"Nov 2025", price:586.70,  tier:"trophy", packs:24, notes:"3rd anniversary set. Luffy, Ace & Sabo Manga Rares. Already climbing fast." },
-  { id:"OP14",    code:"OP-14",          name:"The Azure Sea's Seven",     type:"main",    release:"Jan 2026", price:239.62,  tier:"hold",   packs:24, notes:"Strong upside potential as supply tightens post-release." },
-  { id:"OP15",    code:"OP-15",          name:"Adventure on Kami's Island",type:"main",    release:"Apr 2026", price:208.97,  tier:"new",    packs:24, notes:"Brand new (Apr 2026). Skypiea Arc." },
-  { id:"OP16",    code:"OP-16",          name:"The Time of Battle",        type:"main",    release:"May 2026", price:277.13,  tier:"new",    packs:24, notes:"Brand new (May 2026). Chase cards TBD." },
-  { id:"EB01",    code:"EB-01",          name:"Memorial Collection",       type:"extra",   release:"Feb 2024", price:840.81,  tier:"trophy", packs:24, notes:"Chopper Manga Rare is the crown jewel." },
-  { id:"EB02",    code:"EB-02",          name:"Anime 25th Collection",     type:"extra",   release:"May 2025", price:447.74,  tier:"trophy", packs:24, notes:"25th anniversary anime art; massive Luffy pull value." },
-  { id:"EB03",    code:"EB-03",          name:"Heroines Edition",          type:"extra",   release:"Feb 2026", price:300.98,  tier:"watch",  packs:24, notes:"#1 seller Feb 2026. Extremely high pull value relative to box cost." },
-  { id:"PRB01",   code:"PRB-01",         name:"The Best Vol. 1",           type:"premium", release:"Nov 2024", price:843.42,  tier:"trophy", packs:20, notes:"10 cards/pack. Luffy, Nami, Zoro & Chopper Manga Comic Parallels." },
-  { id:"PRB02",   code:"PRB-02",         name:"The Best Vol. 2",           type:"premium", release:"Oct 2025", price:333.85,  tier:"hold",   packs:20, notes:"Guaranteed SR per pack. Sanji Manga debut." },
+  { id:"OP02",    code:"OP-02",          name:"Paramount War",             type:"main",    release:"Mar 2023", price:499.19,  tier:"trophy", packs:24, notes:"Very few sealed boxes remain. Benefits from OP01 scarcity." },
+  { id:"OP03",    code:"OP-03",          name:"Pillars of Strength",       type:"main",    release:"Jun 2023", price:530.65,  tier:"trophy", packs:24, notes:"Block 1 set (rotated Apr 2026). Collector demand drives price." },
+  { id:"OP04",    code:"OP-04",          name:"Kingdoms of Intrigue",      type:"main",    release:"Sep 2023", price:520.73,  tier:"trophy", packs:24, notes:"Steady appreciation; Block 1 vintage status reinforced post-rotation." },
+  { id:"OP05",    code:"OP-05",          name:"Awakening of the New Era",  type:"main",    release:"Dec 2023", price:988.28,  tier:"trophy", packs:24, notes:"Most sought-after investment set. Two cards worth more than most sealed boxes." },
+  { id:"OP06",    code:"OP-06",          name:"Wings of the Captain",      type:"main",    release:"Mar 2024", price:357.79,  tier:"hold",   packs:24, notes:"Steady climber; consistent demand from Sanji/Zoro fans." },
+  { id:"OP07",    code:"OP-07",          name:"500 Years in the Future",   type:"main",    release:"Jun 2024", price:295.96,  tier:"hold",   packs:24, notes:"Reliable appreciation tracking the broader market uptrend." },
+  { id:"OP08",    code:"OP-08",          name:"Two Legends",               type:"main",    release:"Sep 2024", price:225.72,  tier:"hold",   packs:24, notes:"Affordable entry point. Rayleigh Manga Rare is the chase." },
+  { id:"OP09",    code:"OP-09",          name:"Emperors in the New World", type:"main",    release:"Dec 2024", price:588.48,  tier:"trophy", packs:24, notes:"Gold Roger alone anchors this in Tier 1." },
+  { id:"OP10",    code:"OP-10",          name:"Royal Blood",               type:"main",    release:"Mar 2025", price:220.77,  tier:"hold",   packs:24, notes:"Low entry point with minimal downside risk as supply tightens." },
+  { id:"OP11",    code:"OP-11",          name:"A Fist of Divine Speed",    type:"main",    release:"Jun 2025", price:405.11,  tier:"hold",   packs:24, notes:"Three major chase cards in one set — rare concentration." },
+  { id:"OP12",    code:"OP-12",          name:"Legacy of the Master",      type:"main",    release:"Sep 2025", price:246.27,  tier:"hold",   packs:24, notes:"Still finding price floor as distribution supply settles." },
+  { id:"OP13",    code:"OP-13",          name:"Carrying On His Will",      type:"main",    release:"Nov 2025", price:589.55,  tier:"trophy", packs:24, notes:"3rd anniversary set. Luffy, Ace & Sabo Manga Rares. Already climbing fast." },
+  { id:"OP14",    code:"OP-14",          name:"The Azure Sea's Seven",     type:"main",    release:"Jan 2026", price:258.79,  tier:"hold",   packs:24, notes:"Strong upside potential as supply tightens post-release." },
+  { id:"OP15",    code:"OP-15",          name:"Adventure on Kami's Island",type:"main",    release:"Apr 2026", price:206.24,  tier:"new",    packs:24, notes:"Brand new (Apr 2026). Skypiea Arc." },
+  { id:"OP16",    code:"OP-16",          name:"The Time of Battle",        type:"main",    release:"May 2026", price:276.95,  tier:"new",    packs:24, notes:"Brand new (May 2026). Chase cards TBD." },
+  { id:"EB01",    code:"EB-01",          name:"Memorial Collection",       type:"extra",   release:"Feb 2024", price:835.47,  tier:"trophy", packs:24, notes:"Chopper Manga Rare is the crown jewel." },
+  { id:"EB02",    code:"EB-02",          name:"Anime 25th Collection",     type:"extra",   release:"May 2025", price:466.41,  tier:"trophy", packs:24, notes:"25th anniversary anime art; massive Luffy pull value." },
+  { id:"EB03",    code:"EB-03",          name:"Heroines Edition",          type:"extra",   release:"Feb 2026", price:320.92,  tier:"watch",  packs:24, notes:"#1 seller Feb 2026. Extremely high pull value relative to box cost." },
+  { id:"PRB01",   code:"PRB-01",         name:"The Best Vol. 1",           type:"premium", release:"Nov 2024", price:845.40,  tier:"trophy", packs:20, notes:"10 cards/pack. Luffy, Nami, Zoro & Chopper Manga Comic Parallels." },
+  { id:"PRB02",   code:"PRB-02",         name:"The Best Vol. 2",           type:"premium", release:"Oct 2025", price:339.46,  tier:"hold",   packs:20, notes:"Guaranteed SR per pack. Sanji Manga debut." },
+];
+
+// ─── CHART COLORS ─────────────────────────────────────────────────────────────
+const CHART_COLORS = [
+  "#FFD700","#60A5FA","#34D399","#F87171","#A78BFA","#FB923C","#38BDF8","#4ADE80",
+  "#F472B6","#FACC15","#818CF8","#2DD4BF","#FCA5A5","#86EFAC","#C084FC","#FCD34D",
+  "#67E8F9","#F9A8D4","#6EE7B7","#93C5FD","#FDA4AF","#D9F99D"
 ];
 
 const TIERS = {
@@ -467,9 +561,8 @@ const TIERS = {
   new:    { label:"🆕 New Release", color:"#34D399", bg:"rgba(52,211,153,0.12)",  border:"rgba(52,211,153,0.35)" },
 };
 
-function fmt(n) {
-  return "$" + Number(n).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
-}
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+const fmt = n => "$" + Number(n).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
 function metricColor(r) {
   r = parseFloat(r);
   return r>=5?"#34D399":r>=2?"#FFD700":r>=1?"#60A5FA":"#F87171";
@@ -477,16 +570,10 @@ function metricColor(r) {
 function getMetric(id, price) {
   const cards = TOP_CARDS[id];
   if (!cards || !cards.length || !price) return null;
-  const top5  = cards.slice(0, 5);
-  const top10 = cards.slice(0, 10);
-  const sum5  = top5.reduce((s,c)=>s+c.price, 0);
-  const sum10 = top10.reduce((s,c)=>s+c.price, 0);
-  return {
-    sum: sum5, sum10,
-    ratio:   (sum5  / price).toFixed(2),
-    ratio10: (sum10 / price).toFixed(2),
-    cards,
-  };
+  const top5  = cards.slice(0,5), top10 = cards.slice(0,10);
+  const sum5  = top5.reduce((s,c)=>s+c.price,0);
+  const sum10 = top10.reduce((s,c)=>s+c.price,0);
+  return { sum:sum5, sum10, ratio:(sum5/price).toFixed(2), ratio10:(sum10/price).toFixed(2), cards };
 }
 function trendIcon(tier) {
   if (tier==="trophy"||tier==="watch") return '<span class="trend" style="color:#34D399">▲ Rising</span>';
@@ -494,160 +581,229 @@ function trendIcon(tier) {
   return '<span class="trend" style="color:#94A3B8">● Stable</span>';
 }
 
-// State
-let activeType = "all", activeTier = "all", activeSort = "release";
+// ─── GUIDE ────────────────────────────────────────────────────────────────────
+let activeType="all", activeTier="all", activeSort="release";
 const expanded = new Set();
 
 function renderGrid() {
   let sets = [...SETS];
+  if (activeType!=="all") sets = sets.filter(s=>s.type===activeType);
+  if (activeTier!=="all") sets = sets.filter(s=>s.tier===activeTier);
+  if (activeSort==="price-desc") sets.sort((a,b)=>b.price-a.price);
+  else if (activeSort==="price-asc") sets.sort((a,b)=>a.price-b.price);
+  else if (activeSort==="metric-desc") sets.sort((a,b)=>parseFloat(getMetric(b.id,b.price)?.ratio||0)-parseFloat(getMetric(a.id,a.price)?.ratio||0));
+  else if (activeSort==="metric10-desc") sets.sort((a,b)=>parseFloat(getMetric(b.id,b.price)?.ratio10||0)-parseFloat(getMetric(a.id,a.price)?.ratio10||0));
 
-  // Filter
-  if (activeType !== "all") sets = sets.filter(s => s.type === activeType);
-  if (activeTier !== "all") sets = sets.filter(s => s.tier === activeTier);
-
-  // Sort
-  if (activeSort === "price-desc") sets.sort((a,b) => b.price - a.price);
-  else if (activeSort === "price-asc") sets.sort((a,b) => a.price - b.price);
-  else if (activeSort === "metric-desc") {
-    sets.sort((a,b) => {
-      const ma = getMetric(a.id, a.price), mb = getMetric(b.id, b.price);
-      return parseFloat(mb?.ratio||0) - parseFloat(ma?.ratio||0);
-    });
-  }
-
-  const grid = document.getElementById("grid");
-  grid.innerHTML = sets.map(set => {
-    const tier = TIERS[set.tier] || TIERS.hold;
-    const metric = getMetric(set.id, set.price);
-    const isOpen = expanded.has(set.id);
-    const mc = metric ? metricColor(metric.ratio) : "#64748B";
-
-    const top1 = metric && metric.cards.length > 0 ? `
-      <div class="top1">
-        <span style="color:#FFD700">#1 card: </span>
-        <span style="color:#60A5FA">${metric.cards[0].name}</span>
-        <span style="color:#34D399;margin-left:6px;font-weight:700">${fmt(metric.cards[0].price)}</span>
-        ${metric.cards[0].manual ? '<span class="manual-badge">⚠ manual</span>' : ''}
-      </div>` : '';
-
-    const cardRows = metric && metric.cards.length > 0
-      ? metric.cards.map((card, i) => `
-        ${i===5 ? '<div style="font-size:10px;color:#475569;padding:6px 0 2px;letter-spacing:0.1em;text-transform:uppercase;border-top:1px dashed rgba(255,255,255,0.08)">Cards #6–10</div>' : ''}
-        <div class="card-row">
-          <div class="card-row-inner">
-            <div style="flex:1;min-width:0">
-              <span class="card-rank">#${i+1}</span>
-              <span class="card-name-sm">${card.name}</span>
-              <span class="card-id">[${card.code}]</span>
-              ${card.manual ? '<span class="manual-badge">⚠ manual</span>' : ''}
-            </div>
-            <span class="card-price" style="color:${i===0?'#FFD700':i<5?'#94A3B8':'#64748B'}">${fmt(card.price)}</span>
-          </div>
-          ${card.manual && card.manualNote ? `<div class="manual-note">${card.manualNote}</div>` : ''}
-        </div>`).join('')
+  document.getElementById("grid").innerHTML = sets.map(set => {
+    const tier=TIERS[set.tier]||TIERS.hold, metric=getMetric(set.id,set.price), isOpen=expanded.has(set.id);
+    const mc=metric?metricColor(metric.ratio):"#64748B", mc10=metric?metricColor(metric.ratio10):"#64748B";
+    const top1 = metric&&metric.cards.length ? `<div class="top1"><span style="color:#FFD700">#1 card: </span><span style="color:#60A5FA">${metric.cards[0].name}</span><span style="color:#34D399;margin-left:6px;font-weight:700">${fmt(metric.cards[0].price)}</span>${metric.cards[0].manual?'<span class="manual-badge">⚠ manual</span>':''}</div>` : '';
+    const cardRows = metric&&metric.cards.length
+      ? metric.cards.map((card,i)=>`${i===5?'<div style="font-size:10px;color:#475569;padding:6px 0 2px;letter-spacing:0.1em;text-transform:uppercase;border-top:1px dashed rgba(255,255,255,0.08)">Cards #6–10</div>':''}<div class="card-row"><div class="card-row-inner"><div style="flex:1;min-width:0"><span class="card-rank">#${i+1}</span><span class="card-name-sm">${card.name}</span><span class="card-id">[${card.code}]</span>${card.manual?'<span class="manual-badge">⚠ manual</span>':''}</div><span class="card-price" style="color:${i===0?'#FFD700':i<5?'#94A3B8':'#64748B'}">${fmt(card.price)}</span></div>${card.manual&&card.manualNote?`<div class="manual-note">${card.manualNote}</div>`:''}</div>`).join('')
       : '<div class="no-cards">No card price data available yet.</div>';
+    const summary = metric&&metric.cards.length ? `<div class="summary"><div class="summary-row"><span class="summary-label">Box Price</span><span class="summary-val" style="color:#94A3B8">${fmt(set.price)}</span></div><div class="summary-row"><span class="summary-label">Top 5 Sum</span><span class="summary-val" style="color:#60A5FA">${fmt(metric.sum)}</span></div><div class="summary-row"><span class="summary-label">Top 5 Metric</span><span class="summary-metric" style="color:${mc}">${metric.ratio}x</span></div><div class="summary-row" style="margin-top:4px;padding-top:4px;border-top:1px solid rgba(255,255,255,0.06)"><span class="summary-label">Top 10 Sum</span><span class="summary-val" style="color:#60A5FA">${fmt(metric.sum10)}</span></div><div class="summary-row"><span class="summary-label">Top 10 Metric</span><span class="summary-metric" style="color:${mc10}">${metric.ratio10}x</span></div></div>` : '';
 
-    const mc10 = metric ? metricColor(metric.ratio10) : "#64748B";
-    const summary = metric && metric.cards.length > 0 ? `
-      <div class="summary">
-        <div class="summary-row"><span class="summary-label">Box Price</span><span class="summary-val" style="color:#94A3B8">${fmt(set.price)}</span></div>
-        <div class="summary-row"><span class="summary-label">Top 5 Sum</span><span class="summary-val" style="color:#60A5FA">${fmt(metric.sum)}</span></div>
-        <div class="summary-row"><span class="summary-label">Top 5 Metric</span><span class="summary-metric" style="color:${mc}">${metric.ratio}x</span></div>
-        <div class="summary-row" style="margin-top:4px;padding-top:4px;border-top:1px solid rgba(255,255,255,0.06)">
-          <span class="summary-label">Top 10 Sum</span><span class="summary-val" style="color:#60A5FA">${fmt(metric.sum10)}</span>
+    return `<div class="card${isOpen?' open':''}" id="card-${set.id}" style="--tier-color:${tier.color};--tier-bg:${tier.bg};--tier-border:${tier.border}">
+      <div class="card-header" onclick="toggleCard('${set.id}')">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${tier.color};opacity:0.7"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:4px;margin-bottom:6px">
+          <div><div class="card-type">${{main:"Main Set",extra:"Extra Booster",premium:"Premium Booster"}[set.type]}</div><div class="card-code">${set.code}</div></div>
+          <span class="tier-badge">${tier.label}</span>
         </div>
-        <div class="summary-row"><span class="summary-label">Top 10 Metric</span><span class="summary-metric" style="color:${mc10}">${metric.ratio10}x</span></div>
-      </div>` : '';
-
-    return `
-      <div class="card${isOpen?' open':''}" id="card-${set.id}"
-           style="--tier-color:${tier.color};--tier-bg:${tier.bg};--tier-border:${tier.border}">
-        <div class="card-header" onclick="toggleCard('${set.id}')">
-          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${tier.color};opacity:0.7"></div>
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:4px;margin-bottom:6px">
-            <div>
-              <div class="card-type">${{main:"Main Set",extra:"Extra Booster",premium:"Premium Booster"}[set.type]}</div>
-              <div class="card-code">${set.code}</div>
-            </div>
-            <span class="tier-badge">${tier.label}</span>
-          </div>
-          <div class="card-name">${set.name}</div>
-          <div class="card-meta">Released: ${set.release} · ${set.packs} packs/box</div>
-          <div class="price-row">
-            <div>
-              <div class="box-price" style="color:${tier.color}">${fmt(set.price)}</div>
-              <div class="box-price-label">sealed box (market)</div>
-            </div>
-            ${metric ? `<div style="text-align:right">
-              <div style="display:flex;gap:10px;justify-content:flex-end;align-items:flex-end">
-                <div>
-                  <div class="metric-val" style="color:${mc};font-size:16px">${metric.ratio}x</div>
-                  <div class="metric-label">top 5</div>
-                </div>
-                <div>
-                  <div class="metric-val" style="color:${metricColor(metric.ratio10)};font-size:16px">${metric.ratio10}x</div>
-                  <div class="metric-label">top 10</div>
-                </div>
-              </div>
-            </div>` : ''}
-          </div>
-          <div class="card-footer">
-            ${top1}
-            <div class="card-notes">${set.notes}</div>
-            <div class="card-footer-row">
-              ${trendIcon(set.tier)}
-              <span class="expand-hint">${isOpen?'▲ Hide':'▼ Top 10 cards'}</span>
-            </div>
-          </div>
+        <div class="card-name">${set.name}</div>
+        <div class="card-meta">Released: ${set.release} · ${set.packs} packs/box</div>
+        <div class="price-row">
+          <div><div class="box-price" style="color:${tier.color}">${fmt(set.price)}</div><div class="box-price-label">sealed box (market)</div></div>
+          ${metric?`<div style="text-align:right"><div style="display:flex;gap:10px;justify-content:flex-end;align-items:flex-end"><div><div class="metric-val" style="color:${mc}">${metric.ratio}x</div><div class="metric-label">top 5</div></div><div><div class="metric-val" style="color:${mc10}">${metric.ratio10}x</div><div class="metric-label">top 10</div></div></div></div>`:''}
         </div>
-        <div class="card-expand">
-          <div class="expand-title">Top 10 Cards — Ungraded EN Market Price</div>
-          ${cardRows}
-          ${summary}
-          <div class="ev-warning">⚠ Ultra-rare pulls. Actual EV per box is much lower. Always verify before purchasing.</div>
+        <div class="card-footer">
+          ${top1}
+          <div class="card-notes">${set.notes}</div>
+          <div class="card-footer-row">${trendIcon(set.tier)}<span class="expand-hint">${isOpen?'▲ Hide':'▼ Top 10 cards'}</span></div>
         </div>
-      </div>`;
+      </div>
+      <div class="card-expand">
+        <div class="expand-title">Top 10 Cards — Ungraded EN Market Price</div>
+        ${cardRows}${summary}
+        <div class="ev-warning">⚠ Ultra-rare pulls. Actual EV per box is much lower. Always verify before purchasing.</div>
+      </div>
+    </div>`;
   }).join('');
 }
 
 function toggleCard(id) {
-  if (expanded.has(id)) expanded.delete(id);
-  else expanded.add(id);
+  expanded.has(id) ? expanded.delete(id) : expanded.add(id);
   renderGrid();
 }
 
+// ─── CHART ────────────────────────────────────────────────────────────────────
+let activeSetIds = new Set(SETS.map(s=>s.id));
+
+function getChartValue(entry, id, metric) {
+  const d = entry.data[id];
+  if (!d) return null;
+  if (metric==="price") return d.price||null;
+  if (metric==="metric5") return d.price&&d.sum5 ? parseFloat((d.sum5/d.price).toFixed(2)) : null;
+  if (metric==="metric10") return d.price&&d.sum10 ? parseFloat((d.sum10/d.price).toFixed(2)) : null;
+  return null;
+}
+
+function buildToggles() {
+  const typeFilter = document.getElementById("chart-type").value;
+  const filteredSets = SETS.filter(s=>typeFilter==="all"||s.type===typeFilter);
+  const wrap = document.getElementById("set-toggles");
+  wrap.innerHTML = filteredSets.map((s,i)=>`
+    <button class="set-toggle${activeSetIds.has(s.id)?' on':''}"
+      style="${activeSetIds.has(s.id)?`background:${CHART_COLORS[i%CHART_COLORS.length]}22;border-color:${CHART_COLORS[i%CHART_COLORS.length]};color:${CHART_COLORS[i%CHART_COLORS.length]}`:''};"
+      onclick="toggleSet('${s.id}',this,${i})">${s.code}</button>
+  `).join('');
+}
+
+function toggleSet(id, btn, colorIdx) {
+  if (activeSetIds.has(id)) { activeSetIds.delete(id); btn.className="set-toggle"; btn.style=""; }
+  else { activeSetIds.add(id); btn.className="set-toggle on"; const c=CHART_COLORS[colorIdx%CHART_COLORS.length]; btn.style=`background:${c}22;border-color:${c};color:${c}`; }
+  renderChart();
+}
+
+function renderChart() {
+  const canvas = document.getElementById("chart-canvas");
+  const ctx = canvas.getContext("2d");
+  const metric = document.getElementById("chart-metric").value;
+  const typeFilter = document.getElementById("chart-type").value;
+  const filteredSets = SETS.filter(s=>(typeFilter==="all"||s.type===typeFilter)&&activeSetIds.has(s.id));
+  const dates = PRICE_HISTORY.map(e=>e.date);
+
+  // Canvas sizing
+  const W = canvas.parentElement.clientWidth - 32;
+  canvas.width = Math.max(W, 400);
+  canvas.height = 420;
+  const w = canvas.width, h = canvas.height;
+  const PAD = { top:20, right:20, bottom:50, left:70 };
+  const plotW = w - PAD.left - PAD.right;
+  const plotH = h - PAD.top - PAD.bottom;
+
+  ctx.clearRect(0,0,w,h);
+
+  // Gather all values to find min/max
+  let allVals = [];
+  filteredSets.forEach(s => {
+    PRICE_HISTORY.forEach(e => {
+      const v = getChartValue(e, s.id, metric);
+      if (v!=null&&v>0) allVals.push(v);
+    });
+  });
+
+  if (!allVals.length) {
+    ctx.fillStyle="#475569"; ctx.font="14px Georgia"; ctx.textAlign="center";
+    ctx.fillText("No data for selected sets/metric", w/2, h/2);
+    document.getElementById("chart-legend").innerHTML='';
+    return;
+  }
+
+  const minV = 0, maxV = Math.max(...allVals) * 1.1;
+
+  // Grid lines
+  ctx.strokeStyle="rgba(255,255,255,0.06)"; ctx.lineWidth=1;
+  const gridLines = 5;
+  for (let i=0;i<=gridLines;i++) {
+    const y = PAD.top + plotH - (i/gridLines)*plotH;
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left+plotW, y); ctx.stroke();
+    const val = minV + (i/gridLines)*(maxV-minV);
+    ctx.fillStyle="#64748B"; ctx.font="10px Georgia"; ctx.textAlign="right";
+    const label = metric==="price" ? "$"+Math.round(val).toLocaleString() : val.toFixed(1)+"x";
+    ctx.fillText(label, PAD.left-6, y+4);
+  }
+
+  // X axis labels
+  ctx.textAlign="center"; ctx.fillStyle="#64748B"; ctx.font="10px Georgia";
+  dates.forEach((d,i) => {
+    const x = PAD.left + (dates.length===1 ? plotW/2 : (i/(dates.length-1))*plotW);
+    ctx.fillText(d, x, h-PAD.bottom+18);
+  });
+
+  // Axes
+  ctx.strokeStyle="rgba(255,255,255,0.15)"; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(PAD.left,PAD.top); ctx.lineTo(PAD.left,PAD.top+plotH); ctx.lineTo(PAD.left+plotW,PAD.top+plotH); ctx.stroke();
+
+  // Metric label
+  ctx.save(); ctx.translate(14, PAD.top+plotH/2); ctx.rotate(-Math.PI/2);
+  ctx.textAlign="center"; ctx.fillStyle="#94A3B8"; ctx.font="11px Georgia";
+  ctx.fillText(metric==="price"?"Box Market Price ($)":metric==="metric5"?"Top 5 Metric (x)":"Top 10 Metric (x)", 0, 0);
+  ctx.restore();
+
+  // Plot lines
+  const legendItems = [];
+  filteredSets.forEach((set, si) => {
+    const color = CHART_COLORS[SETS.indexOf(set) % CHART_COLORS.length];
+    const points = PRICE_HISTORY.map((e,i) => {
+      const v = getChartValue(e, set.id, metric);
+      if (v==null||v===0) return null;
+      const x = PAD.left + (dates.length===1 ? plotW/2 : (i/(dates.length-1))*plotW);
+      const y = PAD.top + plotH - ((v-minV)/(maxV-minV))*plotH;
+      return {x,y,v};
+    });
+
+    const validPoints = points.filter(p=>p!=null);
+    if (!validPoints.length) return;
+
+    // Line
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.setLineDash([]);
+    ctx.beginPath();
+    let first=true;
+    points.forEach(p => {
+      if (!p) return;
+      if (first) { ctx.moveTo(p.x,p.y); first=false; }
+      else ctx.lineTo(p.x,p.y);
+    });
+    ctx.stroke();
+
+    // Dots + value labels
+    points.forEach(p => {
+      if (!p) return;
+      ctx.fillStyle=color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,4,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle="#E2E8F0"; ctx.font="bold 9px Georgia"; ctx.textAlign="center";
+      const label = metric==="price"?"$"+Math.round(p.v).toLocaleString():p.v.toFixed(1)+"x";
+      ctx.fillText(label, p.x, p.y-10);
+    });
+
+    legendItems.push({color, label: set.code+" — "+set.name});
+  });
+
+  // Legend
+  document.getElementById("chart-legend").innerHTML = legendItems.map(l=>
+    `<div class="legend-item"><div class="legend-dot" style="background:${l.color}"></div><span>${l.label}</span></div>`
+  ).join('');
+}
+
+// ─── TAB SWITCHING ────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll(".tab-content").forEach(el=>el.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(el=>el.classList.remove("active"));
+  document.getElementById("tab-"+tab).classList.add("active");
+  document.querySelectorAll(".nav-tab")[tab==="guide"?0:1].classList.add("active");
+  if (tab==="chart") { buildToggles(); renderChart(); }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 function init() {
   document.getElementById("last-updated").textContent = LAST_UPDATED;
   document.getElementById("stat-sets").textContent = SETS.length;
   document.getElementById("stat-avg").textContent = fmt(Math.round(SETS.reduce((s,x)=>s+x.price,0)/SETS.length));
   document.getElementById("stat-trophy").textContent = SETS.filter(s=>s.tier==="trophy").length;
 
-  // Type filter buttons
-  document.querySelectorAll("[data-filter-type]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      activeType = btn.dataset.filterType;
-      document.querySelectorAll("[data-filter-type]").forEach(b => b.classList.remove("active-type"));
-      btn.classList.add("active-type");
-      renderGrid();
-    });
-  });
-
-  // Tier filter buttons
-  document.querySelectorAll("[data-filter-tier]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      activeTier = btn.dataset.filterTier;
-      document.querySelectorAll("[data-filter-tier]").forEach(b => b.classList.remove("active-tier"));
-      btn.classList.add("active-tier");
-      renderGrid();
-    });
-  });
-
-  // Sort
-  document.getElementById("sort-select").addEventListener("change", e => {
-    activeSort = e.target.value;
-    renderGrid();
-  });
-
+  document.querySelectorAll("[data-filter-type]").forEach(btn => btn.addEventListener("click",()=>{
+    activeType=btn.dataset.filterType;
+    document.querySelectorAll("[data-filter-type]").forEach(b=>b.classList.remove("active-type"));
+    btn.classList.add("active-type"); renderGrid();
+  }));
+  document.querySelectorAll("[data-filter-tier]").forEach(btn => btn.addEventListener("click",()=>{
+    activeTier=btn.dataset.filterTier;
+    document.querySelectorAll("[data-filter-tier]").forEach(b=>b.classList.remove("active-tier"));
+    btn.classList.add("active-tier"); renderGrid();
+  }));
+  document.getElementById("sort-select").addEventListener("change",e=>{activeSort=e.target.value;renderGrid();});
+  window.addEventListener("resize",()=>{ if(document.getElementById("tab-chart").classList.contains("active")) renderChart(); });
   renderGrid();
 }
 
