@@ -21,7 +21,8 @@ from datetime import datetime, timezone
 SESSION = requests.Session()
 SESSION.headers.update({'User-Agent': 'OnePieceTCGPriceGuide/1.0'})
 BASE = "https://tcgcsv.com/tcgplayer"
-TOP_N = 10  # how many cards to fetch per set
+TOP_N = 10        # final number of cards to keep per set
+FETCH_N = 12      # how many candidates to fetch before filtering sealed products
 
 BOX_IDS = {
     "OP01-W1": 450086, "OP01-W2": 557280, "OP02": 455866,
@@ -54,10 +55,21 @@ MANUAL_OVERRIDES = {
     },
 }
 
-# Products to exclude from card rankings (sealed product names)
+# Products to exclude from card rankings (sealed product names).
+# Matches any sealed product — boxes, cases, packs, decks, sets, etc.
 EXCLUDE_PATTERN = re.compile(
-    r'booster box|booster pack|booster case|display|^pack$', re.IGNORECASE
+    r'booster box|booster pack|booster case|sleeved booster'
+    r'|box case|\bbox\b|\bcase\b|\bdisplay\b'
+    r'|starter deck|ultra deck|demo deck|learn together'
+    r'|double pack set|pre.?release|release event'
+    r'|campaign.*pack|battle.*pack|winner.*pack'
+    r'|\bpack\b',
+    re.IGNORECASE
 )
+
+# Also build a set of all sealed product IDs to exclude directly by ID
+# (catches any edge cases the regex misses, like EB03 Box appearing as card #7)
+ALL_BOX_IDS = set(BOX_IDS.values())
 
 # ─── FETCH ────────────────────────────────────────────────────────────────────
 
@@ -130,7 +142,8 @@ def build_set_data(all_products, all_prices):
         group_products = all_products.get(gid, {})
         cards = []
         for pid, name in group_products.items():
-            if EXCLUDE_PATTERN.search(name):
+            # Exclude by name pattern OR by known sealed product ID
+            if EXCLUDE_PATTERN.search(name) or pid in ALL_BOX_IDS:
                 continue
             override = MANUAL_OVERRIDES.get(pid)
             p = all_prices.get(pid, {})
@@ -150,7 +163,11 @@ def build_set_data(all_products, all_prices):
                 })
 
         cards.sort(key=lambda c: c["price"], reverse=True)
-        top10 = cards[:TOP_N]
+        # Take top FETCH_N candidates, filter out any sealed products that
+        # slipped through, then keep the top TOP_N genuine cards
+        top10 = [c for c in cards[:FETCH_N]
+                 if not EXCLUDE_PATTERN.search(c["name"])
+                 and c["id"] not in ALL_BOX_IDS][:TOP_N]
 
         sum5  = sum(c["price"] for c in top10[:5])
         sum10 = sum(c["price"] for c in top10)
